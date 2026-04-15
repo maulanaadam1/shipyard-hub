@@ -4,6 +4,7 @@ import React from 'react';
 import StatsOverview from './StatsOverview';
 import FleetStatusChart from './charts/FleetStatusChart';
 import MaintenanceScheduleChart from './charts/MaintenanceScheduleChart';
+import EquipmentUtilizationChart from './charts/EquipmentUtilizationChart';
 import ActiveRepairsQueue from './ActiveRepairsQueue';
 import RepairHistoryChart from './charts/RepairHistoryChart';
 import { motion } from 'motion/react';
@@ -40,6 +41,10 @@ export default function Dashboard() {
           <FleetStatusChart />
         </motion.div>
         
+        <motion.div variants={item} className="h-[450px]">
+          <EquipmentUtilizationChart />
+        </motion.div>
+
         <motion.div variants={item} className="h-[450px]">
           <MaintenanceScheduleChart />
         </motion.div>

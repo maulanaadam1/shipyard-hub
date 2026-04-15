@@ -41,7 +41,7 @@ export default function UserManagement() {
   const openModal = (user: User | null = null) => {
     if (user) {
       setEditingUser(user);
-      setFormData({ name: user.name, email: user.email, role: user.role });
+      setFormData({ name: user.name, email: user.email, password: '', role: user.role });
     } else {
       setEditingUser(null);
       setFormData({ name: '', email: '', password: '', role: 'Staff' });

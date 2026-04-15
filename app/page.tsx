@@ -14,6 +14,7 @@ import VendorManagement from '@/components/VendorManagement';
 import CompanyManagement from '@/components/CompanyManagement';
 import ShipManagement from '@/components/ShipManagement';
 import ProjectManagement from '@/components/ProjectManagement';
+import UtilityDashboard from '@/components/UtilityDashboard';
 import LandingPage from '@/components/LandingPage';
 import { useData } from '@/context/DataContext';
 
@@ -101,6 +102,8 @@ export default function Home() {
                 </div>
               </div>
             </>
+          ) : activeTab === 'Utility' ? (
+            <UtilityDashboard />
           ) : activeTab === 'Master Equipment' ? (
             <EquipmentFleet />
           ) : activeTab === 'Master Vendor' ? (

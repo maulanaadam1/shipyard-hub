@@ -8,9 +8,10 @@ export default function StatsOverview() {
   const { fleet, deployments } = useData();
 
   const totalEquipment = fleet.length;
-  const activeLoans = deployments.filter(d => d.status === 'Deployed').length;
+  const activeLoans = fleet.filter(a => a.status === 'Deployed').length;
   const inMaintenance = fleet.filter(a => a.status === 'Maintenance').length;
   const damaged = fleet.filter(a => a.status === 'Damaged').length;
+  const utilizationRate = totalEquipment > 0 ? Math.round((activeLoans / totalEquipment) * 100) : 0;
 
   const stats = [
     { 
@@ -22,8 +23,8 @@ export default function StatsOverview() {
       trendUp: true
     },
     { 
-      label: 'Active Loans', 
-      value: activeLoans, 
+      label: 'Utilization Rate', 
+      value: `${utilizationRate}%`, 
       icon: ClipboardList, 
       color: 'bg-sky-50 text-sky-600',
       trend: '+12%',

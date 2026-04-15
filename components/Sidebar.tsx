@@ -16,7 +16,8 @@ import {
   Building2,
   Truck,
   Anchor,
-  Briefcase
+  Briefcase,
+  Activity
 } from 'lucide-react';
 import { useData } from '@/context/DataContext';
 import { motion } from 'motion/react';
@@ -29,6 +30,7 @@ export default function Sidebar({ activeTab, onTabChange }: { activeTab: string,
       title: 'Main',
       items: [
         { icon: LayoutDashboard, label: 'Dashboard', roles: ['Admin', 'Manager', 'Staff'] },
+        { icon: Activity, label: 'Utility', roles: ['Admin', 'Manager', 'Staff'] },
         { icon: Briefcase, label: 'Job Order', roles: ['Admin', 'Manager', 'Staff'] },
       ]
     },
