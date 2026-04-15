@@ -118,7 +118,7 @@ export default function EquipmentUtilizationChart() {
               <LabelList 
                 dataKey="utilization" 
                 position="right" 
-                formatter={(val: number) => `${val}%`}
+                formatter={(val: any) => `${val}%`}
                 style={{ fontSize: 10, fontWeight: 700, fill: '#64748b' }}
               />
             </Bar>
