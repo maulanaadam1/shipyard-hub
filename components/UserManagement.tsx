@@ -54,6 +54,10 @@ export default function UserManagement() {
     
     let errorMsg = '';
     if (editingUser) {
+      if (editingUser.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL && formData.role !== 'Admin') {
+        alert("You cannot change the role of the default administrator.");
+        return;
+      }
       const { error: updateError } = await supabase
         .from('profiles')
         .update({
@@ -91,9 +95,13 @@ export default function UserManagement() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, email: string) => {
     if (id === currentUser?.id) {
       alert("You cannot delete your own account.");
+      return;
+    }
+    if (email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL) {
+      alert("You cannot delete the default administrator account.");
       return;
     }
     if (confirm('Are you sure you want to delete this user profile?')) {
@@ -200,7 +208,7 @@ export default function UserManagement() {
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button 
-                        onClick={() => handleDelete(user.id)}
+                        onClick={() => handleDelete(user.id, user.email)}
                         className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                       >
                         <Trash2 className="w-4 h-4" />

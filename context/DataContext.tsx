@@ -485,12 +485,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
     const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       clearTimeout(authTimeout);
       if (session?.user) {
+        const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL;
+        
         // 1. Optimistic Update (Fast!) - Dismiss loading screen immediately
         setCurrentUser({
           id: session.user.id,
           name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown',
           email: session.user.email || '',
-          role: session.user.user_metadata?.role || 'Staff',
+          role: isDefaultAdmin ? 'Admin' : (session.user.user_metadata?.role || 'Staff'),
           avatar: session.user.user_metadata?.avatar_url
         });
         setIsAuthLoading(false);
@@ -508,6 +510,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
           }
 
           if (profile) {
+            // Enforce default admin role if it was changed somehow
+            if (isDefaultAdmin && profile.role !== 'Admin') {
+              await supabase.from('profiles').update({ role: 'Admin' }).eq('id', session.user.id);
+              profile.role = 'Admin';
+            }
+            
             setCurrentUser(prev => prev ? {
               ...prev,
               name: profile.name || prev.name,
@@ -520,7 +528,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
               id: session.user.id,
               name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown',
               email: session.user.email || '',
-              role: 'Staff',
+              role: isDefaultAdmin ? 'Admin' : 'Staff',
               avatar_url: session.user.user_metadata?.avatar_url || ''
             };
             
@@ -528,7 +536,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
             if (insertError) {
               console.error('Error creating new profile:', insertError.message);
             } else {
-              setCurrentUser(prev => prev ? { ...prev, role: 'Staff' } : null);
+              setCurrentUser(prev => prev ? { ...prev, role: isDefaultAdmin ? 'Admin' : 'Staff' } : null);
             }
           }
         } catch (err) {

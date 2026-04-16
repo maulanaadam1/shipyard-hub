@@ -54,11 +54,12 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
         if (signUpError) throw signUpError;
         
         if (authData.user) {
+          const isDefaultAdmin = email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL;
           await supabase.from('profiles').upsert({ 
             id: authData.user.id, 
             name: email.split('@')[0], 
             email: email, 
-            role: 'Staff' 
+            role: isDefaultAdmin ? 'Admin' : 'Staff' 
           }, { onConflict: 'id' });
         }
         
