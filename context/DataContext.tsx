@@ -41,7 +41,7 @@ export interface ApprovalStep {
 export interface LoanRequest {
   id: string;
   date_created: string;
-  request_id: string;
+  request_id: string; 
   project_id: string;
   shipname: string;
   vendor: string;
@@ -505,14 +505,40 @@ export function DataProvider({ children }: { children: ReactNode }) {
         
         try {
           // Fetch profile first to get accurate role and data
-          const { data: profile, error } = await supabase
+          let profile = null;
+          let fetchError = null;
+
+          // 1. Try direct fetch
+          const { data: directProfile, error: directError } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', session.user.id)
             .maybeSingle();
 
-          if (error) {
-            console.error('Error fetching profile:', error.message);
+          if (directProfile) {
+            profile = directProfile;
+          } else {
+            // 2. Fallback to API route (bypasses RLS)
+            try {
+              const res = await fetch('/api/auth/get-profile', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: session.user.id })
+              });
+              if (res.ok) {
+                const data = await res.json();
+                profile = data.profile;
+              } else {
+                fetchError = await res.text();
+              }
+            } catch (e) {
+              console.error('API fallback failed:', e);
+              fetchError = e;
+            }
+          }
+
+          if (!profile && directError) {
+            console.error('Error fetching profile directly:', directError.message);
           }
 
           let finalRole = isDefaultAdmin ? 'Admin' : 'Staff';
@@ -529,8 +555,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
             }
             finalName = profile.name || finalName;
             finalAvatar = profile.avatar_url || finalAvatar;
-          } else if (!error) {
-            // Profile doesn't exist (e.g., first time Google Login). Create it.
+          } else if (!directError && !fetchError) {
+            // Profile truly doesn't exist (e.g., first time Google Login). Create it.
             const newProfile = {
               id: session.user.id,
               name: finalName,
