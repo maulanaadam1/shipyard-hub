@@ -14,7 +14,7 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   const [isLoginModalOpen, setIsLoginModalOpen] = React.useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = React.useState(false);
   const [authMode, setAuthMode] = React.useState<'login' | 'signup'>('login');
-  const [email, setEmail] = React.useState('');
+  const [identifier, setIdentifier] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [authError, setAuthError] = React.useState('');
   const [successMessage, setSuccessMessage] = React.useState('');
@@ -45,20 +45,27 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
     }, 30000);
 
     try {
+      // If it's a username (no @), append dummy domain
+      const isEmail = identifier.includes('@');
+      const authEmail = isEmail ? identifier : `${identifier}@shipyard.local`;
+
       if (authMode === 'login') {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({ email: authEmail, password });
         if (error) throw error;
         setIsLoginModalOpen(false);
       } else {
-        const { data: authData, error: signUpError } = await supabase.auth.signUp({ email, password });
+        const { data: authData, error: signUpError } = await supabase.auth.signUp({ email: authEmail, password });
         if (signUpError) throw signUpError;
         
         if (authData.user) {
-          const isDefaultAdmin = email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL;
+          const isDefaultAdmin = authEmail === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || authEmail === 'superadmin@shipyard.local';
+          const displayName = !isEmail && identifier === 'superadmin' ? 'Super Admin' : (isEmail ? authEmail.split('@')[0] : identifier);
+          const displayEmail = isEmail ? authEmail : '';
+
           await supabase.from('profiles').upsert({ 
             id: authData.user.id, 
-            name: email.split('@')[0], 
-            email: email, 
+            name: displayName, 
+            email: displayEmail, 
             role: isDefaultAdmin ? 'Admin' : 'Staff' 
           }, { onConflict: 'id' });
         }
@@ -68,7 +75,7 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
         setPassword('');
         return;
       }
-      setEmail('');
+      setIdentifier('');
       setPassword('');
     } catch (error: any) {
       setAuthError(error.message);
@@ -228,14 +235,14 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                   </div>
                 )}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Email Address</label>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Email or Username</label>
                   <input 
-                    type="email"
+                    type="text"
                     required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
                     className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
-                    placeholder="name@company.com"
+                    placeholder="name@company.com or username"
                   />
                 </div>
                 <div className="space-y-1">

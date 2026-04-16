@@ -54,7 +54,7 @@ export default function UserManagement() {
     
     let errorMsg = '';
     if (editingUser) {
-      if (editingUser.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL && formData.role !== 'Admin') {
+      if ((editingUser.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || editingUser.email === 'superadmin@shipyard.local' || editingUser.name === 'Super Admin') && formData.role !== 'Admin') {
         alert("You cannot change the role of the default administrator.");
         return;
       }
@@ -95,12 +95,12 @@ export default function UserManagement() {
     }
   };
 
-  const handleDelete = async (id: string, email: string) => {
+  const handleDelete = async (id: string, email: string, name: string) => {
     if (id === currentUser?.id) {
       alert("You cannot delete your own account.");
       return;
     }
-    if (email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL) {
+    if (email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || email === 'superadmin@shipyard.local' || name === 'Super Admin') {
       alert("You cannot delete the default administrator account.");
       return;
     }
@@ -208,7 +208,7 @@ export default function UserManagement() {
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button 
-                        onClick={() => handleDelete(user.id, user.email)}
+                        onClick={() => handleDelete(user.id, user.email, user.name)}
                         className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
                       >
                         <Trash2 className="w-4 h-4" />

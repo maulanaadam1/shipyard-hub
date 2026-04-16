@@ -485,13 +485,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
     const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       clearTimeout(authTimeout);
       if (session?.user) {
-        const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL;
+        const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || session.user.email === 'superadmin@shipyard.local';
+        const isSuperAdmin = session.user.email === 'superadmin@shipyard.local';
         
         // 1. Optimistic Update (Fast!) - Dismiss loading screen immediately
         setCurrentUser({
           id: session.user.id,
-          name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown',
-          email: session.user.email || '',
+          name: isSuperAdmin ? 'Super Admin' : (session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown'),
+          email: isSuperAdmin ? '' : (session.user.email || ''),
           role: isDefaultAdmin ? 'Admin' : (session.user.user_metadata?.role || 'Staff'),
           avatar: session.user.user_metadata?.avatar_url
         });
@@ -526,8 +527,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
             // Profile doesn't exist (e.g., first time Google Login). Create it.
             const newProfile = {
               id: session.user.id,
-              name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown',
-              email: session.user.email || '',
+              name: isSuperAdmin ? 'Super Admin' : (session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown'),
+              email: isSuperAdmin ? '' : (session.user.email || ''),
               role: isDefaultAdmin ? 'Admin' : 'Staff',
               avatar_url: session.user.user_metadata?.avatar_url || ''
             };
