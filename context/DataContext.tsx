@@ -501,15 +501,35 @@ export function DataProvider({ children }: { children: ReactNode }) {
             .from('profiles')
             .select('*')
             .eq('id', session.user.id)
-            .single();
+            .maybeSingle();
 
-          if (!error && profile) {
+          if (error) {
+            console.error('Error fetching profile:', error.message);
+          }
+
+          if (profile) {
             setCurrentUser(prev => prev ? {
               ...prev,
               name: profile.name || prev.name,
               role: profile.role || prev.role,
               avatar: profile.avatar_url || prev.avatar
             } : null);
+          } else if (!error) {
+            // Profile doesn't exist (e.g., first time Google Login). Create it.
+            const newProfile = {
+              id: session.user.id,
+              name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown',
+              email: session.user.email || '',
+              role: 'Staff',
+              avatar_url: session.user.user_metadata?.avatar_url || ''
+            };
+            
+            const { error: insertError } = await supabase.from('profiles').insert(newProfile);
+            if (insertError) {
+              console.error('Error creating new profile:', insertError.message);
+            } else {
+              setCurrentUser(prev => prev ? { ...prev, role: 'Staff' } : null);
+            }
           }
         } catch (err) {
           console.error('Unexpected error fetching profile:', err);
