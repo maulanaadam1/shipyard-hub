@@ -79,9 +79,15 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   };
 
   const handleSupabaseLogout = async () => {
-    await supabase.auth.signOut();
-    setCurrentUser(null);
-    setIsUserSwitcherOpen(false);
+    try {
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error('Error during sign out:', error);
+    } finally {
+      setCurrentUser(null);
+      setIsUserSwitcherOpen(false);
+      window.location.href = '/';
+    }
   };
 
   return (
