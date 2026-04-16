@@ -503,21 +503,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
         const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || session.user.email === 'superadmin@shipyard.local';
         const isSuperAdmin = session.user.email === 'superadmin@shipyard.local';
         
-        // 1. Optimistic Update (Fast!) - Dismiss loading screen immediately
-        setCurrentUser(prev => {
-          const existingRole = prev?.id === session.user.id ? prev.role : null;
-          return {
-            id: session.user.id,
-            name: isSuperAdmin ? 'Super Admin' : (session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown'),
-            email: isSuperAdmin ? '' : (session.user.email || ''),
-            role: isDefaultAdmin ? 'Admin' : (existingRole || session.user.user_metadata?.role || 'Staff'),
-            avatar: session.user.user_metadata?.avatar_url
-          };
-        });
-        setIsAuthLoading(false);
-
         try {
-          // 2. Fetch profile in background to get accurate role and data
+          // Fetch profile first to get accurate role and data
           const { data: profile, error } = await supabase
             .from('profiles')
             .select('*')
@@ -528,38 +515,55 @@ export function DataProvider({ children }: { children: ReactNode }) {
             console.error('Error fetching profile:', error.message);
           }
 
+          let finalRole = isDefaultAdmin ? 'Admin' : 'Staff';
+          let finalName = isSuperAdmin ? 'Super Admin' : (session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown');
+          let finalAvatar = session.user.user_metadata?.avatar_url || '';
+
           if (profile) {
             // Enforce default admin role if it was changed somehow
             if (isDefaultAdmin && profile.role !== 'Admin') {
               await supabase.from('profiles').update({ role: 'Admin' }).eq('id', session.user.id);
-              profile.role = 'Admin';
+              finalRole = 'Admin';
+            } else {
+              finalRole = profile.role || 'Staff';
             }
-            
-            setCurrentUser(prev => prev ? {
-              ...prev,
-              name: profile.name || prev.name,
-              role: profile.role || prev.role,
-              avatar: profile.avatar_url || prev.avatar
-            } : null);
+            finalName = profile.name || finalName;
+            finalAvatar = profile.avatar_url || finalAvatar;
           } else if (!error) {
             // Profile doesn't exist (e.g., first time Google Login). Create it.
             const newProfile = {
               id: session.user.id,
-              name: isSuperAdmin ? 'Super Admin' : (session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown'),
+              name: finalName,
               email: isSuperAdmin ? '' : (session.user.email || ''),
-              role: isDefaultAdmin ? 'Admin' : 'Staff',
-              avatar_url: session.user.user_metadata?.avatar_url || ''
+              role: finalRole,
+              avatar_url: finalAvatar
             };
             
             const { error: insertError } = await supabase.from('profiles').insert(newProfile);
             if (insertError) {
               console.error('Error creating new profile:', insertError.message);
-            } else {
-              setCurrentUser(prev => prev ? { ...prev, role: isDefaultAdmin ? 'Admin' : 'Staff' } : null);
             }
           }
+
+          setCurrentUser({
+            id: session.user.id,
+            name: finalName,
+            email: isSuperAdmin ? '' : (session.user.email || ''),
+            role: finalRole,
+            avatar: finalAvatar
+          });
         } catch (err) {
           console.error('Unexpected error fetching profile:', err);
+          // Fallback if fetch fails completely
+          setCurrentUser({
+            id: session.user.id,
+            name: isSuperAdmin ? 'Super Admin' : (session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown'),
+            email: isSuperAdmin ? '' : (session.user.email || ''),
+            role: isDefaultAdmin ? 'Admin' : 'Staff',
+            avatar: session.user.user_metadata?.avatar_url
+          });
+        } finally {
+          setIsAuthLoading(false);
         }
       } else {
         setCurrentUser(null);
