@@ -485,39 +485,39 @@ export function DataProvider({ children }: { children: ReactNode }) {
     const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       clearTimeout(authTimeout);
       if (session?.user) {
+        // 1. Optimistic Update (Fast!) - Dismiss loading screen immediately
+        setCurrentUser({
+          id: session.user.id,
+          name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown',
+          email: session.user.email || '',
+          role: session.user.user_metadata?.role || 'Staff',
+          avatar: session.user.user_metadata?.avatar_url
+        });
+        setIsAuthLoading(false);
+
         try {
-          // Fetch profile to get role
+          // 2. Fetch profile in background to get accurate role and data
           const { data: profile, error } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', session.user.id)
             .single();
 
-          if (error) {
-            console.error('Error fetching profile:', error.message);
+          if (!error && profile) {
+            setCurrentUser(prev => prev ? {
+              ...prev,
+              name: profile.name || prev.name,
+              role: profile.role || prev.role,
+              avatar: profile.avatar_url || prev.avatar
+            } : null);
           }
-
-          const user: User = {
-            id: session.user.id,
-            name: profile?.name || session.user.user_metadata.full_name || session.user.email?.split('@')[0] || 'Unknown',
-            email: session.user.email || '',
-            role: profile?.role || (session.user.user_metadata.role as any) || 'Staff',
-            avatar: profile?.avatar_url || session.user.user_metadata.avatar_url
-          };
-          setCurrentUser(user);
         } catch (err) {
           console.error('Unexpected error fetching profile:', err);
-          setCurrentUser({
-            id: session.user.id,
-            name: session.user.user_metadata.full_name || session.user.email?.split('@')[0] || 'Unknown',
-            email: session.user.email || '',
-            role: 'Staff'
-          });
         }
       } else {
         setCurrentUser(null);
+        setIsAuthLoading(false);
       }
-      setIsAuthLoading(false);
     });
 
     return () => {
