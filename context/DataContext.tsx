@@ -441,7 +441,22 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
     const profilesSubscription = supabase
       .channel('profiles_changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => fetchData())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, (payload) => {
+        fetchData();
+        if (payload.new && (payload.new as any).id) {
+          setCurrentUser(prev => {
+            if (prev && prev.id === (payload.new as any).id) {
+              return {
+                ...prev,
+                name: (payload.new as any).name || prev.name,
+                role: (payload.new as any).role || prev.role,
+                avatar: (payload.new as any).avatar_url || prev.avatar
+              };
+            }
+            return prev;
+          });
+        }
+      })
       .subscribe();
 
     const vendorsSubscription = supabase
@@ -489,12 +504,15 @@ export function DataProvider({ children }: { children: ReactNode }) {
         const isSuperAdmin = session.user.email === 'superadmin@shipyard.local';
         
         // 1. Optimistic Update (Fast!) - Dismiss loading screen immediately
-        setCurrentUser({
-          id: session.user.id,
-          name: isSuperAdmin ? 'Super Admin' : (session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown'),
-          email: isSuperAdmin ? '' : (session.user.email || ''),
-          role: isDefaultAdmin ? 'Admin' : (session.user.user_metadata?.role || 'Staff'),
-          avatar: session.user.user_metadata?.avatar_url
+        setCurrentUser(prev => {
+          const existingRole = prev?.id === session.user.id ? prev.role : null;
+          return {
+            id: session.user.id,
+            name: isSuperAdmin ? 'Super Admin' : (session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown'),
+            email: isSuperAdmin ? '' : (session.user.email || ''),
+            role: isDefaultAdmin ? 'Admin' : (existingRole || session.user.user_metadata?.role || 'Staff'),
+            avatar: session.user.user_metadata?.avatar_url
+          };
         });
         setIsAuthLoading(false);
 
