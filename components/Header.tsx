@@ -95,13 +95,10 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
             <div className="w-6 h-0.5 bg-white rounded-full"></div>
           </button>
         )}
-        <div className="flex items-center gap-2">
+        <div className="flex lg:hidden items-center gap-2">
           <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
             <Ship className="w-5 h-5 text-[#FDB913]" />
           </div>
-          <h1 className="font-display font-bold text-lg md:text-xl tracking-tight hidden sm:block">
-            Shipyard Hub
-          </h1>
         </div>
       </div>
 

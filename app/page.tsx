@@ -24,11 +24,7 @@ export default function Home() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   if (!currentUser) {
-    return (
-      <div className="min-h-screen flex flex-col">
-        <LandingPage />
-      </div>
-    );
+    return <LandingPage />;
   }
 
   return (
