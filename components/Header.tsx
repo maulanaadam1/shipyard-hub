@@ -6,11 +6,13 @@ import { useData } from '@/context/DataContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { supabase } from '@/lib/supabase';
 import Image from 'next/image';
+import ProfileModal from './ProfileModal';
 
 export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   const { currentUser, setCurrentUser } = useData();
   const [isUserSwitcherOpen, setIsUserSwitcherOpen] = React.useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = React.useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = React.useState(false);
   const [authMode, setAuthMode] = React.useState<'login' | 'signup'>('login');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -159,6 +161,15 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                   
                   <div className="p-2 space-y-1">
                     <button 
+                      onClick={() => {
+                        setIsProfileModalOpen(true);
+                        setIsUserSwitcherOpen(false);
+                      }}
+                      className="w-full flex items-center gap-2 p-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors text-xs font-bold"
+                    >
+                      <UserCircle className="w-4 h-4" /> My Profile
+                    </button>
+                    <button 
                       onClick={handleSupabaseLogout}
                       className="w-full flex items-center gap-2 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors text-xs font-bold"
                     >
@@ -254,6 +265,11 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           </div>
         )}
       </AnimatePresence>
+      {/* Profile Modal */}
+      <ProfileModal 
+        isOpen={isProfileModalOpen} 
+        onClose={() => setIsProfileModalOpen(false)} 
+      />
     </header>
   );
 }
