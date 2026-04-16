@@ -353,6 +353,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
     const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       clearTimeout(authTimeout);
       if (session?.user) {
+        // Set a local timeout for this specific auth state change to prevent hanging
+        const localAuthTimeout = setTimeout(() => {
+          setIsAuthLoading(false);
+          console.warn('Profile fetch in auth state change timed out.');
+        }, 5000);
+
         const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
         const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || session.user.email === `${defaultAdminUsername}@shipyard.local`;
         const isSuperAdmin = session.user.email === `${defaultAdminUsername}@shipyard.local`;
@@ -374,11 +380,18 @@ export function DataProvider({ children }: { children: ReactNode }) {
           } else {
             // 2. Fallback to API route (bypasses RLS)
             try {
+              const controller = new AbortController();
+              const fetchTimeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout for fallback
+              
               const res = await fetch('/api/auth/get-profile', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: session.user.id })
+                body: JSON.stringify({ userId: session.user.id }),
+                signal: controller.signal
               });
+              
+              clearTimeout(fetchTimeoutId);
+              
               if (res.ok) {
                 const data = await res.json();
                 profile = data.profile;
@@ -386,7 +399,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
                 fetchError = await res.text();
               }
             } catch (e) {
-              console.error('API fallback failed:', e);
+              console.error('API fallback failed or timed out:', e);
               fetchError = e;
             }
           }
@@ -402,7 +415,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
           if (profile) {
             // Enforce default admin role if it was changed somehow
             if (isDefaultAdmin && profile.role !== 'Admin') {
-              await supabase.from('profiles').update({ role: 'Admin' }).eq('id', session.user.id);
+              // Don't await this update to avoid blocking the UI
+              supabase.from('profiles').update({ role: 'Admin' }).eq('id', session.user.id).then();
               finalRole = 'Admin';
             } else {
               finalRole = (profile.role as 'Admin' | 'Manager' | 'Staff') || 'Staff';
@@ -419,10 +433,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
               avatar_url: finalAvatar
             };
             
-            const { error: insertError } = await supabase.from('profiles').insert(newProfile);
-            if (insertError) {
-              console.error('Error creating new profile:', insertError.message);
-            }
+            // Don't await this insert to avoid blocking the UI
+            supabase.from('profiles').insert(newProfile).then(({error: insertError}) => {
+              if (insertError) console.error('Error creating new profile:', insertError.message);
+            });
           }
 
           setCurrentUser({
@@ -443,6 +457,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
             avatar: session.user.user_metadata?.avatar_url
           });
         } finally {
+          clearTimeout(localAuthTimeout);
           setIsAuthLoading(false);
         }
       } else {
