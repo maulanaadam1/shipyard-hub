@@ -464,31 +464,56 @@ export function DataProvider({ children }: { children: ReactNode }) {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, () => fetchData())
       .subscribe();
 
+    // Safety timeout for auth loading
+    const authTimeout = setTimeout(() => {
+      setIsAuthLoading(false);
+      console.warn('Auth check timed out. Continuing...');
+    }, 5000);
+
     // Check initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (!session || error) {
+        clearTimeout(authTimeout);
         setIsAuthLoading(false);
       }
+    }).catch(() => {
+      clearTimeout(authTimeout);
+      setIsAuthLoading(false);
     });
 
     // Listen for auth changes
     const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      clearTimeout(authTimeout);
       if (session?.user) {
-        // Fetch profile to get role
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
+        try {
+          // Fetch profile to get role
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
 
-        const user: User = {
-          id: session.user.id,
-          name: profile?.name || session.user.user_metadata.full_name || session.user.email?.split('@')[0] || 'Unknown',
-          email: session.user.email || '',
-          role: profile?.role || (session.user.user_metadata.role as any) || 'Staff',
-          avatar: profile?.avatar_url || session.user.user_metadata.avatar_url
-        };
-        setCurrentUser(user);
+          if (error) {
+            console.error('Error fetching profile:', error.message);
+          }
+
+          const user: User = {
+            id: session.user.id,
+            name: profile?.name || session.user.user_metadata.full_name || session.user.email?.split('@')[0] || 'Unknown',
+            email: session.user.email || '',
+            role: profile?.role || (session.user.user_metadata.role as any) || 'Staff',
+            avatar: profile?.avatar_url || session.user.user_metadata.avatar_url
+          };
+          setCurrentUser(user);
+        } catch (err) {
+          console.error('Unexpected error fetching profile:', err);
+          setCurrentUser({
+            id: session.user.id,
+            name: session.user.user_metadata.full_name || session.user.email?.split('@')[0] || 'Unknown',
+            email: session.user.email || '',
+            role: 'Staff'
+          });
+        }
       } else {
         setCurrentUser(null);
       }
