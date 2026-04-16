@@ -22,7 +22,7 @@ export default function MaintenanceScheduleChart() {
   const data = Object.entries(typeCounts).map(([name, count]) => ({
     name,
     count,
-    color: '#0d9488'
+    color: '#FDB913'
   })).sort((a, b) => b.count - a.count);
 
   return (

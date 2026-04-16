@@ -28,7 +28,7 @@ import { supabase } from '@/lib/supabase';
 const statusColors: Record<string, string> = {
   Draft: 'bg-slate-100 text-slate-600 border-slate-200',
   Pending: 'bg-amber-100 text-amber-700 border-amber-200',
-  Approved: 'bg-teal-100 text-teal-700 border-teal-200',
+  Approved: 'bg-[#FDB913]/20 text-[#e5a611] border-[#FDB913]/30',
   Rejected: 'bg-red-100 text-red-700 border-red-200',
   Active: 'bg-blue-100 text-blue-700 border-blue-200',
   Completed: 'bg-slate-100 text-slate-700 border-slate-200',
@@ -238,7 +238,7 @@ export default function EquipmentLoans() {
         </div>
         <button 
           onClick={openAddModal}
-          className="flex items-center justify-center gap-2 px-6 py-2.5 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors shadow-lg shadow-teal-600/20 w-full lg:w-auto"
+          className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-lg shadow-[#FDB913]/20 w-full lg:w-auto"
         >
           <Plus className="w-4 h-4" />
           Request Loan
@@ -255,7 +255,7 @@ export default function EquipmentLoans() {
                 placeholder="Search by Request ID, Ship, or Project..." 
                 value={searchTerm}
                 onChange={handleSearchChange}
-                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
               />
             </div>
             
@@ -265,12 +265,12 @@ export default function EquipmentLoans() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-teal-50 border border-teal-100 rounded-xl"
+                  className="flex items-center gap-2 px-3 py-1.5 bg-[#FDB913]/10 border border-[#FDB913]/20 rounded-xl"
                 >
-                  <span className="text-xs font-bold text-teal-700 mr-2">{selectedIds.size} Selected</span>
+                  <span className="text-xs font-bold text-[#e5a611] mr-2">{selectedIds.size} Selected</span>
                   <button 
                     onClick={handleBulkExport}
-                    className="p-1.5 text-teal-600 hover:bg-teal-100 rounded-lg transition-colors"
+                    className="p-1.5 text-[#FDB913] hover:bg-[#FDB913]/20 rounded-lg transition-colors"
                     title="Export Selected"
                   >
                     <FileText className="w-4 h-4" />
@@ -293,7 +293,7 @@ export default function EquipmentLoans() {
               <select 
                 value={itemsPerPage}
                 onChange={handleItemsPerPageChange}
-                className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold text-slate-600 outline-none focus:ring-2 focus:ring-teal-500/20"
+                className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold text-slate-600 outline-none focus:ring-2 focus:ring-[#FDB913]/30"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -301,7 +301,7 @@ export default function EquipmentLoans() {
                 <option value="all">All</option>
               </select>
             </div>
-            <button className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-teal-600 hover:border-teal-200 transition-colors">
+            <button className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-[#FDB913] hover:border-[#FDB913]/30 transition-colors">
               <Filter className="w-4 h-4" />
             </button>
           </div>
@@ -316,7 +316,7 @@ export default function EquipmentLoans() {
                     type="checkbox" 
                     checked={selectedIds.size === paginatedLoans.length && paginatedLoans.length > 0}
                     onChange={toggleSelectAll}
-                    className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
+                    className="rounded border-slate-300 text-[#FDB913] focus:ring-[#FDB913]"
                   />
                 </th>
                 <th className="px-6 py-4 border-b border-slate-100 w-12 text-center">No</th>
@@ -336,14 +336,14 @@ export default function EquipmentLoans() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}
-                  className={`hover:bg-slate-50/80 transition-colors group ${selectedIds.has(loan.id) ? 'bg-teal-50/30' : ''}`}
+                  className={`hover:bg-slate-50/80 transition-colors group ${selectedIds.has(loan.id) ? 'bg-[#FDB913]/10/30' : ''}`}
                 >
                   <td className="px-6 py-4">
                     <input 
                       type="checkbox" 
                       checked={selectedIds.has(loan.id)}
                       onChange={() => toggleSelect(loan.id)}
-                      className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
+                      className="rounded border-slate-300 text-[#FDB913] focus:ring-[#FDB913]"
                     />
                   </td>
                   <td className="px-6 py-4 text-center">
@@ -356,7 +356,7 @@ export default function EquipmentLoans() {
                       onClick={() => openEditModal(loan)}
                       className="text-left group/id"
                     >
-                      <span className="text-xs font-mono font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded-md group-hover/id:bg-teal-100 transition-colors">
+                      <span className="text-xs font-mono font-bold text-[#FDB913] bg-[#FDB913]/10 px-2 py-1 rounded-md group-hover/id:bg-[#FDB913]/20 transition-colors">
                         {loan.request_id}
                       </span>
                     </button>
@@ -379,7 +379,7 @@ export default function EquipmentLoans() {
                   <td className="px-6 py-4">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-1.5 text-xs text-slate-600">
-                        <Calendar className="w-3 h-3 text-teal-500" />
+                        <Calendar className="w-3 h-3 text-[#FDB913]" />
                         <span>{loan.date_start}</span>
                       </div>
                       <div className="flex items-center gap-1.5 text-xs text-slate-400">
@@ -390,7 +390,7 @@ export default function EquipmentLoans() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex flex-wrap gap-1 max-w-[150px]">
-                      {loan.items.map((item, i) => (
+                      {loan.items?.map((item, i) => (
                         <span key={i} className="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-medium">
                           {item.quantity}x {item.type}
                         </span>
@@ -410,7 +410,7 @@ export default function EquipmentLoans() {
                       {loan.status === 'Pending' && (
                         <button 
                           onClick={() => handleApprove(loan.id)}
-                          className="p-2 text-slate-400 hover:text-teal-600 rounded-lg hover:bg-teal-50 transition-colors"
+                          className="p-2 text-slate-400 hover:text-[#FDB913] rounded-lg hover:bg-[#FDB913]/10 transition-colors"
                           title="Approve"
                         >
                           <Check className="w-4 h-4" />
@@ -457,7 +457,7 @@ export default function EquipmentLoans() {
             <button 
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
-              className="p-1.5 border border-slate-200 rounded-lg text-slate-400 hover:text-teal-600 hover:border-teal-200 disabled:opacity-50 transition-colors"
+              className="p-1.5 border border-slate-200 rounded-lg text-slate-400 hover:text-[#FDB913] hover:border-[#FDB913]/30 disabled:opacity-50 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -469,7 +469,7 @@ export default function EquipmentLoans() {
             <button 
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
-              className="p-1.5 border border-slate-200 rounded-lg text-slate-400 hover:text-teal-600 hover:border-teal-200 disabled:opacity-50 transition-colors"
+              className="p-1.5 border border-slate-200 rounded-lg text-slate-400 hover:text-[#FDB913] hover:border-[#FDB913]/30 disabled:opacity-50 transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -496,7 +496,7 @@ export default function EquipmentLoans() {
             >
               <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center text-teal-600">
+                  <div className="w-10 h-10 bg-[#FDB913]/20 rounded-xl flex items-center justify-center text-[#FDB913]">
                     <FileText className="w-5 h-5" />
                   </div>
                   <div>
@@ -547,7 +547,7 @@ export default function EquipmentLoans() {
                           }
                         }
                       }}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 disabled:opacity-60"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-60"
                     >
                       <option value="">Select Project</option>
                       {activeProjects.map(p => (
@@ -564,7 +564,7 @@ export default function EquipmentLoans() {
                       defaultValue={selectedLoan?.shipname}
                       required
                       disabled={!isEditable}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 disabled:opacity-60"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-60"
                     >
                       <option value="">Select Ship</option>
                       {ships.map(ship => (
@@ -580,7 +580,7 @@ export default function EquipmentLoans() {
                       placeholder="e.g. WO1909014/YWTS"
                       required
                       disabled={!isEditable}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 disabled:opacity-60"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-60"
                     />
                   </div>
                   <div className="space-y-2">
@@ -589,7 +589,7 @@ export default function EquipmentLoans() {
                       name="vendor"
                       defaultValue={selectedLoan?.vendor}
                       disabled={!isEditable}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 disabled:opacity-60"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-60"
                     >
                       <option value="">Select Vendor</option>
                       {vendors.map(vendor => (
@@ -605,7 +605,7 @@ export default function EquipmentLoans() {
                       defaultValue={selectedLoan?.date_start}
                       required
                       disabled={!isEditable}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 disabled:opacity-60"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-60"
                     />
                   </div>
                   <div className="space-y-2">
@@ -616,7 +616,7 @@ export default function EquipmentLoans() {
                       defaultValue={selectedLoan?.date_finish}
                       required
                       disabled={!isEditable}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 disabled:opacity-60"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-60"
                     />
                   </div>
                 </div>
@@ -628,7 +628,7 @@ export default function EquipmentLoans() {
                       <button 
                         type="button" 
                         onClick={handleAddItemType}
-                        className="text-xs font-bold text-teal-600 hover:text-teal-700 flex items-center gap-1"
+                        className="text-xs font-bold text-[#FDB913] hover:text-[#e5a611] flex items-center gap-1"
                       >
                         <Plus className="w-3 h-3" /> Add Item Type
                       </button>
@@ -644,7 +644,7 @@ export default function EquipmentLoans() {
                           <button 
                             type="button" 
                             onClick={handleAddItemType}
-                            className="mt-3 text-xs font-bold text-teal-600 hover:underline"
+                            className="mt-3 text-xs font-bold text-[#FDB913] hover:underline"
                           >
                             Click here to add your first item
                           </button>
@@ -733,7 +733,7 @@ export default function EquipmentLoans() {
                   </button>
                   <button 
                     type="submit"
-                    className="px-8 py-2.5 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors shadow-lg shadow-teal-600/20"
+                    className="px-8 py-2.5 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-lg shadow-[#FDB913]/20"
                   >
                     {selectedLoan ? 'Update Request' : 'Submit Request'}
                   </button>
@@ -765,7 +765,7 @@ export default function EquipmentLoans() {
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl p-8"
             >
-              <div className="w-16 h-16 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-[#FDB913]/20 text-[#FDB913] rounded-full flex items-center justify-center mx-auto mb-4">
                 <Check className="w-8 h-8" />
               </div>
               <h3 className="font-display font-bold text-xl text-slate-800 mb-2 text-center">Confirm Approval</h3>
@@ -779,7 +779,7 @@ export default function EquipmentLoans() {
                   value={approvalComment}
                   onChange={(e) => setApprovalComment(e.target.value)}
                   placeholder="Enter your approval notes here..."
-                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 min-h-[100px] resize-none"
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] min-h-[100px] resize-none"
                 />
               </div>
 
@@ -792,7 +792,7 @@ export default function EquipmentLoans() {
                 </button>
                 <button 
                   onClick={confirmApprove}
-                  className="flex-1 px-6 py-3 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors shadow-lg shadow-teal-600/20"
+                  className="flex-1 px-6 py-3 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-lg shadow-[#FDB913]/20"
                 >
                   Approve Request
                 </button>
@@ -846,15 +846,15 @@ export default function EquipmentLoans() {
                     <div key={index} className="relative flex gap-6">
                       <div className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-500 ${
                         step.isCompleted 
-                          ? 'bg-teal-500 text-white shadow-lg shadow-teal-500/30' 
+                          ? 'bg-[#FDB913] text-slate-900 shadow-lg shadow-teal-500/30' 
                           : step.isCurrent 
-                            ? 'bg-white border-2 border-teal-500 text-teal-500 animate-pulse' 
+                            ? 'bg-white border-2 border-[#FDB913] text-[#FDB913] animate-pulse' 
                             : 'bg-white border-2 border-slate-100 text-slate-300'
                       }`}>
                         {step.isCompleted ? (
                           <Check className="w-4 h-4" />
                         ) : (
-                          <div className={`w-2 h-2 rounded-full ${step.isCurrent ? 'bg-teal-500' : 'bg-slate-200'}`} />
+                          <div className={`w-2 h-2 rounded-full ${step.isCurrent ? 'bg-[#FDB913]' : 'bg-slate-200'}`} />
                         )}
                       </div>
                       
@@ -901,7 +901,7 @@ export default function EquipmentLoans() {
                       setIsProgressModalOpen(false);
                       handleApprove(selectedLoan.id);
                     }}
-                    className="px-6 py-2 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors shadow-lg shadow-teal-600/20"
+                    className="px-6 py-2 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-lg shadow-[#FDB913]/20"
                   >
                     Approve Now
                   </button>

@@ -316,7 +316,7 @@ export default function ProjectManagement() {
           </label>
           <button 
             onClick={() => handleOpenModal()}
-            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20"
+            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-all shadow-lg shadow-[#FDB913]/20"
           >
             <Plus className="w-4 h-4" />
             Add New Project
@@ -335,7 +335,7 @@ export default function ProjectManagement() {
                 placeholder="Search by ID, vessel, or customer..."
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
               />
             </div>
 
@@ -368,7 +368,7 @@ export default function ProjectManagement() {
               <select 
                 value={itemsPerPage}
                 onChange={(e) => { setItemsPerPage(e.target.value === 'all' ? 'all' : parseInt(e.target.value)); setCurrentPage(1); }}
-                className="bg-white border border-slate-200 rounded-lg px-2 py-1 outline-none focus:border-teal-500"
+                className="bg-white border border-slate-200 rounded-lg px-2 py-1 outline-none focus:border-[#FDB913]"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -392,7 +392,7 @@ export default function ProjectManagement() {
                     type="checkbox"
                     checked={selectedIds.size === paginatedProjects.length && paginatedProjects.length > 0}
                     onChange={toggleSelectAll}
-                    className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
+                    className="rounded border-slate-300 text-[#FDB913] focus:ring-[#FDB913]"
                   />
                 </th>
                 <th className="px-6 py-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">ID</th>
@@ -410,14 +410,14 @@ export default function ProjectManagement() {
                 <motion.tr 
                   layout
                   key={project.id}
-                  className={`hover:bg-slate-50/80 transition-colors ${selectedIds.has(project.id) ? 'bg-teal-50/30' : ''}`}
+                  className={`hover:bg-slate-50/80 transition-colors ${selectedIds.has(project.id) ? 'bg-[#FDB913]/10/30' : ''}`}
                 >
                   <td className="px-6 py-4">
                     <input 
                       type="checkbox"
                       checked={selectedIds.has(project.id)}
                       onChange={() => toggleSelect(project.id)}
-                      className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
+                      className="rounded border-slate-300 text-[#FDB913] focus:ring-[#FDB913]"
                     />
                   </td>
                   <td className="px-6 py-4">
@@ -425,8 +425,8 @@ export default function ProjectManagement() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-teal-50 rounded-lg flex items-center justify-center shrink-0">
-                        <Briefcase className="w-4 h-4 text-teal-600" />
+                      <div className="w-8 h-8 bg-[#FDB913]/10 rounded-lg flex items-center justify-center shrink-0">
+                        <Briefcase className="w-4 h-4 text-[#FDB913]" />
                       </div>
                       <span className="text-sm font-bold text-slate-700">{project.idproject}</span>
                     </div>
@@ -459,7 +459,7 @@ export default function ProjectManagement() {
                     <div className="flex items-center justify-end gap-2">
                       <button 
                         onClick={() => handleOpenModal(project)}
-                        className="p-2 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-400 hover:text-teal-600"
+                        className="p-2 hover:bg-white hover:shadow-sm rounded-lg transition-all text-slate-400 hover:text-[#FDB913]"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
@@ -510,7 +510,7 @@ export default function ProjectManagement() {
                     onClick={() => setCurrentPage(page)}
                     className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${
                       currentPage === page 
-                        ? 'bg-teal-600 text-white shadow-lg shadow-teal-600/20' 
+                        ? 'bg-[#FDB913] text-slate-900 shadow-lg shadow-[#FDB913]/20' 
                         : 'hover:bg-white text-slate-500 border border-transparent hover:border-slate-200'
                     }`}
                   >
@@ -565,7 +565,7 @@ export default function ProjectManagement() {
                       type="text"
                       value={formData.idproject}
                       onChange={(e) => setFormData({ ...formData, idproject: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                       placeholder="e.g. DRP19DBG001/YWTS"
                     />
                   </div>
@@ -576,7 +576,7 @@ export default function ProjectManagement() {
                       type="text"
                       value={formData.shipname}
                       onChange={(e) => setFormData({ ...formData, shipname: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                       placeholder="e.g. MDI-8"
                     />
                   </div>
@@ -587,7 +587,7 @@ export default function ProjectManagement() {
                       type="text"
                       value={formData.cust_company}
                       onChange={(e) => setFormData({ ...formData, cust_company: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                       placeholder="e.g. PT. McConnell Dowell Indonesia"
                     />
                   </div>
@@ -598,7 +598,7 @@ export default function ProjectManagement() {
                       type="number"
                       value={formData.year}
                       onChange={(e) => setFormData({ ...formData, year: parseInt(e.target.value) || new Date().getFullYear() })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                     />
                   </div>
                   <div className="space-y-2">
@@ -606,7 +606,7 @@ export default function ProjectManagement() {
                     <select 
                       value={formData.status}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                     >
                       <option value="Active">Active</option>
                       <option value="Completed">Completed</option>
@@ -620,7 +620,7 @@ export default function ProjectManagement() {
                       type="text"
                       value={formData.project_lead}
                       onChange={(e) => setFormData({ ...formData, project_lead: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                       placeholder="e.g. JOJOK SETYAWAN"
                     />
                   </div>
@@ -630,7 +630,7 @@ export default function ProjectManagement() {
                       type="date"
                       value={formData.est_start}
                       onChange={(e) => setFormData({ ...formData, est_start: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                     />
                   </div>
                   <div className="space-y-2">
@@ -639,7 +639,7 @@ export default function ProjectManagement() {
                       type="date"
                       value={formData.est_finish}
                       onChange={(e) => setFormData({ ...formData, est_finish: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                     />
                   </div>
                 </div>
@@ -655,7 +655,7 @@ export default function ProjectManagement() {
                   <button 
                     type="submit"
                     disabled={isLoading}
-                    className="flex-1 py-3.5 bg-teal-600 text-white rounded-2xl font-bold hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20 disabled:opacity-50"
+                    className="flex-1 py-3.5 bg-[#FDB913] text-slate-900 rounded-2xl font-bold hover:bg-[#e5a611] transition-all shadow-lg shadow-[#FDB913]/20 disabled:opacity-50"
                   >
                     {isLoading ? 'Saving...' : editingProject ? 'Update Project' : 'Create Project'}
                   </button>
@@ -682,8 +682,8 @@ export default function ProjectManagement() {
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 text-center"
             >
-              <div className="w-20 h-20 bg-teal-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Check className="w-10 h-10 text-teal-600" />
+              <div className="w-20 h-20 bg-[#FDB913]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Check className="w-10 h-10 text-[#FDB913]" />
               </div>
               <h3 className="font-display font-bold text-2xl text-slate-900 mb-2">Project Added!</h3>
               <p className="text-slate-500 mb-8">
@@ -691,7 +691,7 @@ export default function ProjectManagement() {
               </p>
               <button 
                 onClick={() => setShowSuccessModal(false)}
-                className="w-full py-4 bg-teal-600 text-white rounded-2xl font-bold hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20"
+                className="w-full py-4 bg-[#FDB913] text-slate-900 rounded-2xl font-bold hover:bg-[#e5a611] transition-all shadow-lg shadow-[#FDB913]/20"
               >
                 Great, thanks!
               </button>

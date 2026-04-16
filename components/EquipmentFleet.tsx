@@ -262,7 +262,7 @@ export default function EquipmentFleet() {
         </div>
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <div className="group relative">
-            <button className="p-2 text-slate-400 hover:text-teal-600 transition-colors">
+            <button className="p-2 text-slate-400 hover:text-[#FDB913] transition-colors">
               <Info className="w-5 h-5" />
             </button>
             <div className="absolute bottom-full right-0 mb-2 w-64 p-4 bg-slate-900 text-white text-[10px] rounded-xl opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity z-50 shadow-xl">
@@ -315,7 +315,7 @@ export default function EquipmentFleet() {
               }
               openAddModal();
             }}
-            className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-teal-600 text-white rounded-xl text-xs sm:text-sm font-bold hover:bg-teal-700 transition-colors shadow-sm"
+            className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-[#FDB913] text-slate-900 rounded-xl text-xs sm:text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-sm"
           >
             <Plus className="w-4 h-4" />
             <span>Add Equipment</span>
@@ -336,7 +336,7 @@ export default function EquipmentFleet() {
                   setSearchTerm(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
               />
             </div>
             
@@ -344,13 +344,13 @@ export default function EquipmentFleet() {
               <motion.div 
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="flex items-center gap-2 px-3 py-1.5 bg-teal-50 border border-teal-100 rounded-xl"
+                className="flex items-center gap-2 px-3 py-1.5 bg-[#FDB913]/10 border border-[#FDB913]/20 rounded-xl"
               >
-                <span className="text-xs font-bold text-teal-700">{selectedIds.size} selected</span>
+                <span className="text-xs font-bold text-[#e5a611]">{selectedIds.size} selected</span>
                 <div className="h-4 w-px bg-teal-200 mx-1" />
                 <button 
                   onClick={handleBulkExport}
-                  className="p-1 text-teal-600 hover:bg-teal-100 rounded transition-colors"
+                  className="p-1 text-[#FDB913] hover:bg-[#FDB913]/20 rounded transition-colors"
                   title="Export Selected"
                 >
                   <Download className="w-4 h-4" />
@@ -375,7 +375,7 @@ export default function EquipmentFleet() {
                   setItemsPerPage(e.target.value === 'all' ? 'all' : parseInt(e.target.value));
                   setCurrentPage(1);
                 }}
-                className="text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-teal-500/20"
+                className="text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded-lg px-2 py-1.5 outline-none focus:ring-2 focus:ring-[#FDB913]/30"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -385,12 +385,12 @@ export default function EquipmentFleet() {
             </div>
             <button 
               onClick={() => setIsImportTextModalOpen(true)}
-              className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-teal-600 hover:border-teal-200 transition-colors"
+              className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-[#FDB913] hover:border-[#FDB913]/30 transition-colors"
               title="Paste CSV Data"
             >
               <FileText className="w-4 h-4" />
             </button>
-            <button className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-teal-600 hover:border-teal-200 transition-colors">
+            <button className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-[#FDB913] hover:border-[#FDB913]/30 transition-colors">
               <Filter className="w-4 h-4" />
             </button>
           </div>
@@ -405,7 +405,7 @@ export default function EquipmentFleet() {
                     type="checkbox" 
                     checked={selectedIds.size === paginatedData.length && paginatedData.length > 0}
                     onChange={toggleSelectAll}
-                    className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
+                    className="rounded border-slate-300 text-[#FDB913] focus:ring-[#FDB913]"
                   />
                 </th>
                 <th className="px-6 py-4 border-b border-slate-100 w-12 text-center">No</th>
@@ -425,14 +425,14 @@ export default function EquipmentFleet() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.02 }}
-                  className={`hover:bg-slate-50/80 transition-colors group ${selectedIds.has(item.id) ? 'bg-teal-50/30' : ''}`}
+                  className={`hover:bg-slate-50/80 transition-colors group ${selectedIds.has(item.id) ? 'bg-[#FDB913]/10/30' : ''}`}
                 >
                   <td className="px-6 py-4">
                     <input 
                       type="checkbox" 
                       checked={selectedIds.has(item.id)}
                       onChange={() => toggleSelect(item.id)}
-                      className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
+                      className="rounded border-slate-300 text-[#FDB913] focus:ring-[#FDB913]"
                     />
                   </td>
                   <td className="px-6 py-4 text-center">
@@ -441,7 +441,7 @@ export default function EquipmentFleet() {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-xs font-mono font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded-md">
+                    <span className="text-xs font-mono font-bold text-[#FDB913] bg-[#FDB913]/10 px-2 py-1 rounded-md">
                       {item.no_asset}
                     </span>
                   </td>
@@ -469,7 +469,7 @@ export default function EquipmentFleet() {
                     <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button 
                         onClick={() => openDetailModal(item)}
-                        className="p-2 text-slate-400 hover:text-teal-600 rounded-lg hover:bg-teal-50 transition-colors"
+                        className="p-2 text-slate-400 hover:text-[#FDB913] rounded-lg hover:bg-[#FDB913]/10 transition-colors"
                         title="View Details"
                       >
                         <Eye className="w-4 h-4" />
@@ -517,7 +517,7 @@ export default function EquipmentFleet() {
             <button 
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
-              className="p-1.5 border border-slate-200 rounded-lg text-slate-400 hover:text-teal-600 hover:border-teal-200 disabled:opacity-50 transition-colors"
+              className="p-1.5 border border-slate-200 rounded-lg text-slate-400 hover:text-[#FDB913] hover:border-[#FDB913]/30 disabled:opacity-50 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -529,7 +529,7 @@ export default function EquipmentFleet() {
             <button 
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
-              className="p-1.5 border border-slate-200 rounded-lg text-slate-400 hover:text-teal-600 hover:border-teal-200 disabled:opacity-50 transition-colors"
+              className="p-1.5 border border-slate-200 rounded-lg text-slate-400 hover:text-[#FDB913] hover:border-[#FDB913]/30 disabled:opacity-50 transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -575,7 +575,7 @@ export default function EquipmentFleet() {
                       defaultValue={selectedItem?.no_asset}
                       disabled={isDetailMode}
                       required
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 disabled:opacity-70"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
                   <div className="space-y-2">
@@ -585,7 +585,7 @@ export default function EquipmentFleet() {
                       defaultValue={selectedItem?.name}
                       disabled={isDetailMode}
                       required
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 disabled:opacity-70"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
                   <div className="space-y-2">
@@ -595,7 +595,7 @@ export default function EquipmentFleet() {
                       defaultValue={selectedItem?.brand}
                       disabled={isDetailMode}
                       required
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 disabled:opacity-70"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
                   <div className="space-y-2">
@@ -605,7 +605,7 @@ export default function EquipmentFleet() {
                       defaultValue={selectedItem?.type_capacity}
                       disabled={isDetailMode}
                       required
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 disabled:opacity-70"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
                   <div className="space-y-2">
@@ -615,7 +615,7 @@ export default function EquipmentFleet() {
                       defaultValue={selectedItem?.location}
                       disabled={isDetailMode}
                       required
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 disabled:opacity-70"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
                   <div className="space-y-2">
@@ -625,7 +625,7 @@ export default function EquipmentFleet() {
                       defaultValue={selectedItem?.year}
                       disabled={isDetailMode}
                       required
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 disabled:opacity-70"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
                   <div className="space-y-2">
@@ -634,7 +634,7 @@ export default function EquipmentFleet() {
                       name="category"
                       defaultValue={selectedItem?.category || 'EQUIPMENT'}
                       disabled={isDetailMode}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 disabled:opacity-70"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
                   <div className="space-y-2">
@@ -643,7 +643,7 @@ export default function EquipmentFleet() {
                       name="alias"
                       defaultValue={selectedItem?.alias}
                       disabled={isDetailMode}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 disabled:opacity-70"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
                 </div>
@@ -659,7 +659,7 @@ export default function EquipmentFleet() {
                   {!isDetailMode && (
                     <button 
                       type="submit"
-                      className="px-8 py-2.5 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors shadow-lg shadow-teal-600/20"
+                      className="px-8 py-2.5 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-lg shadow-[#FDB913]/20"
                     >
                       {selectedItem ? 'Update Asset' : 'Save Asset'}
                     </button>
@@ -732,7 +732,7 @@ export default function EquipmentFleet() {
             >
               <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-teal-100 text-teal-600 rounded-lg">
+                  <div className="p-2 bg-[#FDB913]/20 text-[#FDB913] rounded-lg">
                     <FileText className="w-5 h-5" />
                   </div>
                   <div>
@@ -761,7 +761,7 @@ export default function EquipmentFleet() {
                   value={importText}
                   onChange={(e) => setImportText(e.target.value)}
                   placeholder="Example:&#10;2.10.01/02.001/YWTS, Mesinlas SMAW 400A, SMAW, WEICO, 400A, WAREHOUSE, 2011, WEICO 1, EQUIPMENT"
-                  className="w-full h-64 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-mono outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all resize-none"
+                  className="w-full h-64 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-mono outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all resize-none"
                 />
 
                 <div className="flex justify-end gap-3 pt-4">
@@ -774,7 +774,7 @@ export default function EquipmentFleet() {
                   <button 
                     onClick={handleTextImport}
                     disabled={!importText.trim()}
-                    className="px-8 py-2.5 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors shadow-lg shadow-teal-600/20 disabled:opacity-50 disabled:shadow-none"
+                    className="px-8 py-2.5 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-lg shadow-[#FDB913]/20 disabled:opacity-50 disabled:shadow-none"
                   >
                     Import Data
                   </button>

@@ -21,7 +21,7 @@ export default function FleetStatusChart() {
   };
 
   const data = [
-    { name: 'Available', value: stats.Available, color: '#0d9488' }, // teal-600
+    { name: 'Available', value: stats.Available, color: '#FDB913' }, // teal-600
     { name: 'Deployed', value: stats.Deployed, color: '#0ea5e9' }, // sky-500
     { name: 'Maintenance', value: stats.Maintenance, color: '#f59e0b' }, // amber-500
     { name: 'Damaged', value: stats.Damaged, color: '#ef4444' }, // red-500

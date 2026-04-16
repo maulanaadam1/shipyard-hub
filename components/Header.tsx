@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Bell, Search, User as UserIcon, LogOut, UserCircle, X } from 'lucide-react';
+import { Bell, User as UserIcon, LogOut, UserCircle, X, Ship } from 'lucide-react';
 import { useData } from '@/context/DataContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { supabase } from '@/lib/supabase';
@@ -83,43 +83,40 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   };
 
   return (
-    <header className="h-16 bg-teal-600 text-white flex items-center justify-between px-4 md:px-8 sticky top-0 z-30 shadow-sm">
+    <header className="h-16 bg-[#FDB913] text-slate-900 flex items-center justify-between px-4 md:px-8 sticky top-0 z-30 shadow-sm">
       <div className="flex items-center gap-4 md:gap-8">
         {currentUser && (
           <button 
             onClick={onMenuClick}
-            className="lg:hidden p-2 hover:bg-teal-500 rounded-lg transition-colors flex flex-col items-center justify-center gap-1.5"
+            className="lg:hidden p-2 hover:bg-[#FDB913] rounded-lg transition-colors flex flex-col items-center justify-center gap-1.5"
           >
             <div className="w-6 h-0.5 bg-white rounded-full"></div>
             <div className="w-6 h-0.5 bg-white rounded-full"></div>
             <div className="w-6 h-0.5 bg-white rounded-full"></div>
           </button>
         )}
-        <h1 className="font-display font-bold text-lg md:text-xl tracking-tight truncate max-w-[200px] sm:max-w-none">
-          Shipyard Hub
-        </h1>
-        <div className="hidden lg:flex items-center bg-teal-700/50 rounded-full px-4 py-1.5 gap-2 border border-teal-500/30">
-          <Search className="w-4 h-4 text-teal-200" />
-          <input 
-            type="text" 
-            placeholder="Search assets..." 
-            className="bg-transparent border-none outline-none text-sm placeholder:text-teal-300 w-32 xl:w-64"
-          />
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center">
+            <Ship className="w-5 h-5 text-[#FDB913]" />
+          </div>
+          <h1 className="font-display font-bold text-lg md:text-xl tracking-tight hidden sm:block">
+            Shipyard Hub
+          </h1>
         </div>
       </div>
 
       <div className="flex items-center gap-4 md:gap-6">
         {currentUser && (
-          <button className="relative p-2 hover:bg-teal-500 rounded-full transition-colors hidden sm:block">
+          <button className="relative p-2 hover:bg-[#FDB913] rounded-full transition-colors hidden sm:block">
             <Bell className="w-5 h-5" />
-            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-teal-600"></span>
+            <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-[#FDB913]"></span>
           </button>
         )}
         
         {!currentUser ? (
           <button 
             onClick={() => setIsLoginModalOpen(true)}
-            className="p-2 bg-teal-500 hover:bg-teal-400 rounded-full transition-all border border-teal-400 shadow-sm flex items-center justify-center"
+            className="p-2 bg-[#FDB913] hover:bg-[#FDB913]/80 rounded-full transition-all border border-[#FDB913]/70 shadow-sm flex items-center justify-center"
             title="Login"
           >
             <UserCircle className="w-6 h-6" />
@@ -128,13 +125,13 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           <div className="relative">
             <button 
               onClick={() => setIsUserSwitcherOpen(!isUserSwitcherOpen)}
-              className="flex items-center gap-3 pl-4 border-l border-teal-500/50 hover:opacity-80 transition-opacity"
+              className="flex items-center gap-3 pl-4 border-l border-slate-900/20 hover:opacity-80 transition-opacity"
             >
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-medium leading-none">{currentUser.name}</p>
-                <p className="text-[10px] text-teal-200 uppercase tracking-wider font-bold mt-1">{currentUser.role}</p>
+                <p className="text-[10px] text-slate-700 uppercase tracking-wider font-bold mt-1">{currentUser.role}</p>
               </div>
-              <div className="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center border-2 border-teal-400 overflow-hidden shrink-0 relative">
+              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center border-2 border-white shadow-sm overflow-hidden shrink-0 relative">
                 {currentUser.avatar ? (
                   <Image 
                     src={currentUser.avatar} 
@@ -144,7 +141,7 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <UserIcon className="w-6 h-6 text-teal-100" />
+                  <UserIcon className="w-6 h-6 text-slate-400" />
                 )}
               </div>
             </button>
@@ -211,7 +208,7 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                   </div>
                 )}
                 {successMessage && (
-                  <div className="p-3 bg-teal-50 border border-teal-100 text-teal-600 text-xs rounded-xl font-medium">
+                  <div className="p-3 bg-[#FDB913]/10 border border-[#FDB913]/20 text-[#FDB913] text-xs rounded-xl font-medium">
                     {successMessage}
                   </div>
                 )}
@@ -222,7 +219,7 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                     placeholder="name@company.com"
                   />
                 </div>
@@ -233,7 +230,7 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                     placeholder="••••••••"
                   />
                 </div>
@@ -241,7 +238,7 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                 <button 
                   type="submit"
                   disabled={isAuthLoading}
-                  className="w-full py-3 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20 disabled:opacity-50"
+                  className="w-full py-3 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-all shadow-lg shadow-[#FDB913]/20 disabled:opacity-50"
                 >
                   {isAuthLoading ? 'Processing...' : authMode === 'login' ? 'Sign In' : 'Sign Up'}
                 </button>
@@ -250,7 +247,7 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                   <button 
                     type="button"
                     onClick={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')}
-                    className="text-xs font-bold text-slate-500 hover:text-teal-600 transition-colors"
+                    className="text-xs font-bold text-slate-500 hover:text-[#FDB913] transition-colors"
                   >
                     {authMode === 'login' ? "Don't have an account? Sign Up" : "Already have an account? Sign In"}
                   </button>

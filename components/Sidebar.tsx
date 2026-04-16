@@ -71,8 +71,8 @@ export default function Sidebar({ activeTab, onTabChange }: { activeTab: string,
     <aside className="w-64 bg-white border-r border-slate-200 h-screen flex flex-col sticky top-0 z-40">
       <div className="p-6 border-bottom border-slate-100">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-teal-600 rounded-lg flex items-center justify-center">
-            <Ship className="text-white w-5 h-5" />
+          <div className="w-8 h-8 bg-[#FDB913] rounded-lg flex items-center justify-center shadow-sm">
+            <Ship className="text-slate-900 w-5 h-5" />
           </div>
           <span className="font-display font-bold text-lg tracking-tight text-slate-800">Shipyard Hub</span>
         </div>
@@ -91,7 +91,7 @@ export default function Sidebar({ activeTab, onTabChange }: { activeTab: string,
                 onClick={() => onTabChange(item.label)}
                 className={`w-full flex items-center justify-between p-3 rounded-xl transition-colors ${
                   activeTab === item.label 
-                    ? 'bg-teal-50 text-teal-700 font-medium' 
+                    ? 'bg-[#FDB913]/10 text-[#e5a611] font-medium' 
                     : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
                 }`}
               >

@@ -43,8 +43,8 @@ export default function RepairHistoryChart() {
             <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="colorRet" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#0d9488" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="#0d9488" stopOpacity={0}/>
+                  <stop offset="5%" stopColor="#FDB913" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#FDB913" stopOpacity={0}/>
                 </linearGradient>
                 <linearGradient id="colorDam" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="5%" stopColor="#ef4444" stopOpacity={0.3}/>
@@ -69,7 +69,7 @@ export default function RepairHistoryChart() {
               <Area 
                 type="monotone" 
                 dataKey="returned" 
-                stroke="#0d9488" 
+                stroke="#FDB913" 
                 fillOpacity={1} 
                 fill="url(#colorRet)" 
                 strokeWidth={2}
@@ -89,7 +89,7 @@ export default function RepairHistoryChart() {
       
       <div className="flex items-center justify-center gap-4 mt-4">
         <div className="flex items-center gap-1.5">
-          <div className="w-2 h-2 rounded-full bg-teal-600"></div>
+          <div className="w-2 h-2 rounded-full bg-[#FDB913]"></div>
           <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Returned (OK)</span>
         </div>
         <div className="flex items-center gap-1.5">

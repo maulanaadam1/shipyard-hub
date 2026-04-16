@@ -26,7 +26,6 @@ export default function Home() {
   if (!currentUser) {
     return (
       <div className="min-h-screen flex flex-col">
-        <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
         <LandingPage />
       </div>
     );
@@ -63,14 +62,14 @@ export default function Home() {
               <div className="px-8 pb-8">
                 <div className="bg-slate-900 rounded-3xl p-8 text-white flex flex-col md:flex-row items-center justify-between gap-8 overflow-hidden relative">
                   <div className="relative z-10 max-w-md">
-                    <h2 className="font-display font-bold text-3xl mb-4 text-teal-400">Mobile Companion</h2>
+                    <h2 className="font-display font-bold text-3xl mb-4 text-[#FDB913]">Mobile Companion</h2>
                     <p className="text-slate-400 text-sm leading-relaxed mb-6">
                       Access the full power of the Shipyard Hub on the go. 
                       Track equipment health, update work orders, and receive 
                       real-time alerts directly on your mobile device.
                     </p>
                     <div className="flex gap-4">
-                      <button className="px-6 py-2.5 bg-teal-600 hover:bg-teal-500 rounded-full font-bold text-sm transition-colors">
+                      <button className="px-6 py-2.5 bg-[#FDB913] hover:bg-[#FDB913] rounded-full font-bold text-sm transition-colors">
                         Download iOS
                       </button>
                       <button className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-full font-bold text-sm transition-colors border border-slate-700">
@@ -83,8 +82,8 @@ export default function Home() {
                   <div className="relative w-64 h-[400px] bg-slate-800 rounded-[3rem] border-[8px] border-slate-700 shadow-2xl overflow-hidden hidden lg:block">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-700 rounded-b-2xl"></div>
                     <div className="p-4 pt-10">
-                      <div className="w-full h-32 bg-teal-600/20 rounded-2xl mb-4 border border-teal-500/30 flex items-center justify-center">
-                        <div className="w-12 h-12 rounded-full border-4 border-teal-500 border-t-transparent animate-spin"></div>
+                      <div className="w-full h-32 bg-[#FDB913]/20 rounded-2xl mb-4 border border-[#FDB913]/30 flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full border-4 border-[#FDB913] border-t-transparent animate-spin"></div>
                       </div>
                       <div className="space-y-3">
                         <div className="h-4 bg-slate-700 rounded-full w-3/4"></div>
@@ -98,7 +97,7 @@ export default function Home() {
                   </div>
 
                   {/* Background Glow */}
-                  <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-teal-600/20 blur-[100px] rounded-full"></div>
+                  <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-[#FDB913]/20 blur-[100px] rounded-full"></div>
                 </div>
               </div>
             </>

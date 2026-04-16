@@ -270,7 +270,7 @@ export default function ShipManagement() {
           </label>
           <button 
             onClick={() => handleOpenModal()}
-            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20"
+            className="flex items-center justify-center gap-2 px-6 py-2.5 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-all shadow-lg shadow-[#FDB913]/20"
           >
             <Plus className="w-4 h-4" />
             Add New Ship
@@ -289,7 +289,7 @@ export default function ShipManagement() {
                 placeholder="Search by ship name, type, or owner..."
                 value={searchTerm}
                 onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
               />
             </div>
 
@@ -299,9 +299,9 @@ export default function ShipManagement() {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-teal-50 border border-teal-100 rounded-xl"
+                  className="flex items-center gap-2 px-3 py-1.5 bg-[#FDB913]/10 border border-[#FDB913]/20 rounded-xl"
                 >
-                  <span className="text-xs font-bold text-teal-700 mr-2">{selectedIds.size} Selected</span>
+                  <span className="text-xs font-bold text-[#e5a611] mr-2">{selectedIds.size} Selected</span>
                   <button 
                     onClick={handleBulkDelete}
                     className="p-1.5 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
@@ -320,7 +320,7 @@ export default function ShipManagement() {
               <select 
                 value={itemsPerPage}
                 onChange={(e) => { setItemsPerPage(e.target.value === 'all' ? 'all' : parseInt(e.target.value)); setCurrentPage(1); }}
-                className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold text-slate-600 outline-none focus:ring-2 focus:ring-teal-500/20"
+                className="bg-white border border-slate-200 rounded-lg px-2 py-1 text-xs font-bold text-slate-600 outline-none focus:ring-2 focus:ring-[#FDB913]/30"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -328,7 +328,7 @@ export default function ShipManagement() {
                 <option value="all">All</option>
               </select>
             </div>
-            <button className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-teal-600 hover:border-teal-200 transition-colors">
+            <button className="p-2 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-[#FDB913] hover:border-[#FDB913]/30 transition-colors">
               <Filter className="w-4 h-4" />
             </button>
           </div>
@@ -343,7 +343,7 @@ export default function ShipManagement() {
                     type="checkbox" 
                     checked={selectedIds.size === paginatedShips.length && paginatedShips.length > 0}
                     onChange={toggleSelectAll}
-                    className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
+                    className="rounded border-slate-300 text-[#FDB913] focus:ring-[#FDB913]"
                   />
                 </th>
                 <th className="px-6 py-4 border-b border-slate-100 w-12 text-center">No</th>
@@ -363,14 +363,14 @@ export default function ShipManagement() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: idx * 0.05 }}
-                  className={`hover:bg-slate-50/80 transition-colors group ${selectedIds.has(ship.id) ? 'bg-teal-50/30' : ''}`}
+                  className={`hover:bg-slate-50/80 transition-colors group ${selectedIds.has(ship.id) ? 'bg-[#FDB913]/10/30' : ''}`}
                 >
                   <td className="px-6 py-4">
                     <input 
                       type="checkbox" 
                       checked={selectedIds.has(ship.id)}
                       onChange={() => toggleSelect(ship.id)}
-                      className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
+                      className="rounded border-slate-300 text-[#FDB913] focus:ring-[#FDB913]"
                     />
                   </td>
                   <td className="px-6 py-4 text-center">
@@ -383,7 +383,7 @@ export default function ShipManagement() {
                   </td>
                   <td className="px-6 py-4">
                     {ship.type ? (
-                      <span className="px-2 py-0.5 bg-teal-50 text-teal-600 rounded text-[10px] font-bold uppercase tracking-wider">
+                      <span className="px-2 py-0.5 bg-[#FDB913]/10 text-[#FDB913] rounded text-[10px] font-bold uppercase tracking-wider">
                         {ship.type}
                       </span>
                     ) : (
@@ -409,7 +409,7 @@ export default function ShipManagement() {
                     <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <button 
                         onClick={() => handleOpenModal(ship)}
-                        className="p-2 text-slate-400 hover:text-teal-600 rounded-lg hover:bg-teal-50 transition-colors"
+                        className="p-2 text-slate-400 hover:text-[#FDB913] rounded-lg hover:bg-[#FDB913]/10 transition-colors"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
@@ -448,7 +448,7 @@ export default function ShipManagement() {
             <button 
               onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
               disabled={currentPage === 1}
-              className="p-1.5 border border-slate-200 rounded-lg text-slate-400 hover:text-teal-600 hover:border-teal-200 disabled:opacity-50 transition-colors"
+              className="p-1.5 border border-slate-200 rounded-lg text-slate-400 hover:text-[#FDB913] hover:border-[#FDB913]/30 disabled:opacity-50 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -460,7 +460,7 @@ export default function ShipManagement() {
             <button 
               onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
               disabled={currentPage === totalPages}
-              className="p-1.5 border border-slate-200 rounded-lg text-slate-400 hover:text-teal-600 hover:border-teal-200 disabled:opacity-50 transition-colors"
+              className="p-1.5 border border-slate-200 rounded-lg text-slate-400 hover:text-[#FDB913] hover:border-[#FDB913]/30 disabled:opacity-50 transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -509,7 +509,7 @@ export default function ShipManagement() {
                       type="text"
                       value={formData.shipname}
                       onChange={(e) => setFormData({ ...formData, shipname: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                       placeholder="e.g. MT SINAR AGRA"
                     />
                   </div>
@@ -519,7 +519,7 @@ export default function ShipManagement() {
                       type="text"
                       value={formData.type}
                       onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                       placeholder="e.g. MT, TB, BG"
                     />
                   </div>
@@ -528,7 +528,7 @@ export default function ShipManagement() {
                     <select 
                       value={formData.company}
                       onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                     >
                       <option value="">Select Company</option>
                       {companies.map(c => (
@@ -542,7 +542,7 @@ export default function ShipManagement() {
                       type="number"
                       value={formData.gt}
                       onChange={(e) => setFormData({ ...formData, gt: parseFloat(e.target.value) || 0 })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                     />
                   </div>
                 </div>
@@ -555,7 +555,7 @@ export default function ShipManagement() {
                       step="0.01"
                       value={formData.loa}
                       onChange={(e) => setFormData({ ...formData, loa: parseFloat(e.target.value) || 0 })}
-                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                     />
                   </div>
                   <div className="space-y-1">
@@ -565,7 +565,7 @@ export default function ShipManagement() {
                       step="0.01"
                       value={formData.breadth}
                       onChange={(e) => setFormData({ ...formData, breadth: parseFloat(e.target.value) || 0 })}
-                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                     />
                   </div>
                   <div className="space-y-1">
@@ -575,7 +575,7 @@ export default function ShipManagement() {
                       step="0.01"
                       value={formData.depth}
                       onChange={(e) => setFormData({ ...formData, depth: parseFloat(e.target.value) || 0 })}
-                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                     />
                   </div>
                   <div className="space-y-1">
@@ -585,7 +585,7 @@ export default function ShipManagement() {
                       step="0.01"
                       value={formData.draft}
                       onChange={(e) => setFormData({ ...formData, draft: parseFloat(e.target.value) || 0 })}
-                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                     />
                   </div>
                 </div>
@@ -601,7 +601,7 @@ export default function ShipManagement() {
                   <button 
                     type="submit"
                     disabled={isLoading}
-                    className="flex-1 py-3.5 bg-teal-600 text-white rounded-2xl font-bold hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20 disabled:opacity-50"
+                    className="flex-1 py-3.5 bg-[#FDB913] text-slate-900 rounded-2xl font-bold hover:bg-[#e5a611] transition-all shadow-lg shadow-[#FDB913]/20 disabled:opacity-50"
                   >
                     {isLoading ? 'Saving...' : editingShip ? 'Update Ship' : 'Create Ship'}
                   </button>
@@ -628,8 +628,8 @@ export default function ShipManagement() {
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 text-center"
             >
-              <div className="w-20 h-20 bg-teal-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Check className="w-10 h-10 text-teal-600" />
+              <div className="w-20 h-20 bg-[#FDB913]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Check className="w-10 h-10 text-[#FDB913]" />
               </div>
               <h3 className="font-display font-bold text-2xl text-slate-900 mb-2">Ship Added!</h3>
               <p className="text-slate-500 mb-8">
@@ -637,7 +637,7 @@ export default function ShipManagement() {
               </p>
               <button 
                 onClick={() => setShowSuccessModal(false)}
-                className="w-full py-4 bg-teal-600 text-white rounded-2xl font-bold hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20"
+                className="w-full py-4 bg-[#FDB913] text-slate-900 rounded-2xl font-bold hover:bg-[#e5a611] transition-all shadow-lg shadow-[#FDB913]/20"
               >
                 Great, thanks!
               </button>

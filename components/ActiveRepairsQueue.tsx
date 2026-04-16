@@ -30,12 +30,12 @@ export default function ActiveRepairsQueue() {
     <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm h-full flex flex-col">
       <div className="flex items-center justify-between mb-6">
         <h3 className="font-display font-bold text-slate-800">Active Repairs Queue</h3>
-        <button className="text-xs font-bold text-teal-600 hover:text-teal-700 uppercase tracking-wider">View All</button>
+        <button className="text-xs font-bold text-[#FDB913] hover:text-[#e5a611] uppercase tracking-wider">View All</button>
       </div>
       
       <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar">
         {repairs.map((repair) => (
-          <div key={repair.id} className="group p-4 rounded-xl border border-slate-100 hover:border-teal-200 hover:bg-teal-50/30 transition-all">
+          <div key={repair.id} className="group p-4 rounded-xl border border-slate-100 hover:border-[#FDB913]/30 hover:bg-[#FDB913]/10/30 transition-all">
             <div className="flex items-start justify-between mb-2">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono font-bold text-slate-400">{repair.id}</span>
@@ -54,7 +54,7 @@ export default function ActiveRepairsQueue() {
                 <p className="text-sm font-bold text-slate-800">{repair.issue}</p>
                 <p className="text-xs text-slate-500 mt-0.5">{repair.type} Repair</p>
               </div>
-              <button className="p-2 bg-white border border-slate-200 rounded-lg text-slate-400 group-hover:text-teal-600 group-hover:border-teal-200 transition-colors shadow-sm">
+              <button className="p-2 bg-white border border-slate-200 rounded-lg text-slate-400 group-hover:text-[#FDB913] group-hover:border-[#FDB913]/30 transition-colors shadow-sm">
                 <Wrench className="w-4 h-4" />
               </button>
             </div>

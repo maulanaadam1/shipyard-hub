@@ -130,7 +130,7 @@ export default function UserManagement() {
         </div>
         <button 
           onClick={() => openModal()}
-          className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors shadow-lg shadow-teal-600/20 w-full lg:w-auto"
+          className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-lg shadow-[#FDB913]/20 w-full lg:w-auto"
         >
           <UserPlus className="w-4 h-4" /> Add New User
         </button>
@@ -145,7 +145,7 @@ export default function UserManagement() {
               placeholder="Search users..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+              className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
             />
           </div>
         </div>
@@ -165,7 +165,7 @@ export default function UserManagement() {
                 <tr key={user.id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center text-teal-700 font-bold text-sm">
+                      <div className="w-10 h-10 bg-[#FDB913]/20 rounded-full flex items-center justify-center text-[#e5a611] font-bold text-sm">
                         {user.name.charAt(0)}
                       </div>
                       <div>
@@ -186,8 +186,8 @@ export default function UserManagement() {
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="inline-flex items-center gap-1.5 text-xs text-teal-600 font-medium">
-                      <div className="w-1.5 h-1.5 bg-teal-500 rounded-full"></div>
+                    <span className="inline-flex items-center gap-1.5 text-xs text-[#FDB913] font-medium">
+                      <div className="w-1.5 h-1.5 bg-[#FDB913] rounded-full"></div>
                       Active
                     </span>
                   </td>
@@ -195,7 +195,7 @@ export default function UserManagement() {
                     <div className="flex items-center justify-end gap-2">
                       <button 
                         onClick={() => openModal(user)}
-                        className="p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all"
+                        className="p-2 text-slate-400 hover:text-[#FDB913] hover:bg-[#FDB913]/10 rounded-lg transition-all"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
@@ -234,7 +234,7 @@ export default function UserManagement() {
               <form onSubmit={handleSubmit}>
                 <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center text-teal-600">
+                    <div className="w-10 h-10 bg-[#FDB913]/20 rounded-xl flex items-center justify-center text-[#FDB913]">
                       <Users className="w-5 h-5" />
                     </div>
                     <div>
@@ -257,7 +257,7 @@ export default function UserManagement() {
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                       placeholder="e.g. John Doe"
                     />
                   </div>
@@ -268,7 +268,7 @@ export default function UserManagement() {
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                       placeholder="john@example.com"
                     />
                   </div>
@@ -280,7 +280,7 @@ export default function UserManagement() {
                         type="password"
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                        className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                         placeholder="Set user password"
                         minLength={6}
                       />
@@ -296,8 +296,8 @@ export default function UserManagement() {
                           onClick={() => setFormData({ ...formData, role })}
                           className={`py-2 rounded-xl text-xs font-bold border transition-all ${
                             formData.role === role
-                              ? 'bg-teal-600 text-white border-teal-600 shadow-md shadow-teal-600/20'
-                              : 'bg-white text-slate-500 border-slate-200 hover:border-teal-200'
+                              ? 'bg-[#FDB913] text-slate-900 border-[#FDB913] shadow-md shadow-[#FDB913]/20'
+                              : 'bg-white text-slate-500 border-slate-200 hover:border-[#FDB913]/30'
                           }`}
                         >
                           {role}
@@ -317,7 +317,7 @@ export default function UserManagement() {
                   </button>
                   <button 
                     type="submit"
-                    className="px-8 py-2.5 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors shadow-lg shadow-teal-600/20"
+                    className="px-8 py-2.5 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-lg shadow-[#FDB913]/20"
                   >
                     {editingUser ? 'Save Changes' : 'Create User'}
                   </button>
@@ -344,8 +344,8 @@ export default function UserManagement() {
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
               className="relative w-full max-w-sm bg-white rounded-3xl shadow-2xl p-8 text-center"
             >
-              <div className="w-20 h-20 bg-teal-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Check className="w-10 h-10 text-teal-600" />
+              <div className="w-20 h-20 bg-[#FDB913]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Check className="w-10 h-10 text-[#FDB913]" />
               </div>
               <h3 className="font-display font-bold text-2xl text-slate-900 mb-2">User Created!</h3>
               <p className="text-slate-500 mb-8">
@@ -353,7 +353,7 @@ export default function UserManagement() {
               </p>
               <button 
                 onClick={() => setShowSuccessModal(false)}
-                className="w-full py-4 bg-teal-600 text-white rounded-2xl font-bold hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20"
+                className="w-full py-4 bg-[#FDB913] text-slate-900 rounded-2xl font-bold hover:bg-[#e5a611] transition-all shadow-lg shadow-[#FDB913]/20"
               >
                 Great, thanks!
               </button>

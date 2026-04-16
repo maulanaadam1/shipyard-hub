@@ -105,7 +105,7 @@ export default function EquipmentMaintenance() {
               placeholder="Search by Asset ID, Name, or Category..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
             />
           </div>
           <div className="flex items-center justify-between sm:justify-end gap-3 w-full lg:w-auto">
@@ -165,7 +165,7 @@ export default function EquipmentMaintenance() {
                         ) : (
                           <button 
                             onClick={() => openRepairModal(asset)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-teal-50 text-teal-700 rounded-lg text-[10px] font-bold hover:bg-teal-100 transition-colors border border-teal-200"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#FDB913]/10 text-[#e5a611] rounded-lg text-[10px] font-bold hover:bg-[#FDB913]/20 transition-colors border border-[#FDB913]/30"
                           >
                             <CheckCircle2 className="w-3.5 h-3.5" /> Complete Repair
                           </button>
@@ -178,7 +178,7 @@ export default function EquipmentMaintenance() {
                   <tr>
                     <td colSpan={5} className="px-6 py-20 text-center">
                       <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <CheckCircle2 className="w-8 h-8 text-teal-400" />
+                        <CheckCircle2 className="w-8 h-8 text-[#FDB913]" />
                       </div>
                       <h3 className="text-slate-800 font-bold">All equipment is healthy</h3>
                       <p className="text-sm text-slate-500">No assets currently requiring maintenance.</p>
@@ -202,7 +202,7 @@ export default function EquipmentMaintenance() {
                   setItemsPerPage(val === 'all' ? 'all' : parseInt(val));
                   setCurrentPage(1);
                 }}
-                className="bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold px-2 py-1 outline-none focus:ring-2 focus:ring-teal-500/20"
+                className="bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold px-2 py-1 outline-none focus:ring-2 focus:ring-[#FDB913]/30"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -253,7 +253,7 @@ export default function EquipmentMaintenance() {
             >
               <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center text-teal-600">
+                  <div className="w-10 h-10 bg-[#FDB913]/20 rounded-xl flex items-center justify-center text-[#FDB913]">
                     <Wrench className="w-5 h-5" />
                   </div>
                   <div>
@@ -287,7 +287,7 @@ export default function EquipmentMaintenance() {
                       onChange={(e) => setRepairNotes(e.target.value)}
                       placeholder="Describe what was fixed..."
                       rows={3}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all resize-none"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all resize-none"
                     />
                   </div>
                   <div>
@@ -299,15 +299,15 @@ export default function EquipmentMaintenance() {
                         value={repairCost}
                         onChange={(e) => setRepairCost(e.target.value)}
                         placeholder="0"
-                        className="w-full pl-12 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                        className="w-full pl-12 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3 p-4 bg-teal-50 rounded-2xl border border-teal-100">
-                  <AlertCircle className="w-5 h-5 text-teal-500 shrink-0 mt-0.5" />
-                  <p className="text-[11px] text-teal-700 leading-relaxed">
+                <div className="flex items-start gap-3 p-4 bg-[#FDB913]/10 rounded-2xl border border-[#FDB913]/20">
+                  <AlertCircle className="w-5 h-5 text-[#FDB913] shrink-0 mt-0.5" />
+                  <p className="text-[11px] text-[#e5a611] leading-relaxed">
                     By completing this repair, the asset status will be set back to <strong>Available</strong> and it will appear in the fleet for future deployments.
                   </p>
                 </div>
@@ -322,7 +322,7 @@ export default function EquipmentMaintenance() {
                 </button>
                 <button 
                   onClick={handleCompleteRepair}
-                  className="px-8 py-2.5 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors shadow-lg shadow-teal-600/20"
+                  className="px-8 py-2.5 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-lg shadow-[#FDB913]/20"
                 >
                   Confirm & Available
                 </button>

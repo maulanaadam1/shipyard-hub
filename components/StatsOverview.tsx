@@ -18,7 +18,7 @@ export default function StatsOverview() {
       label: 'Total Equipment', 
       value: totalEquipment, 
       icon: Package, 
-      color: 'bg-teal-50 text-teal-600',
+      color: 'bg-[#FDB913]/10 text-[#FDB913]',
       trend: '+2.5%',
       trendUp: true
     },

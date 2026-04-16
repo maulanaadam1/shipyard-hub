@@ -143,7 +143,7 @@ export default function EquipmentReturn() {
               placeholder="Search by Request ID, Ship, or Project..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
             />
           </div>
           <div className="flex items-center justify-between sm:justify-end gap-3 w-full lg:w-auto">
@@ -177,13 +177,13 @@ export default function EquipmentReturn() {
                         <td className="px-6 py-4">
                           <button 
                             onClick={() => toggleExpand(loan.id)}
-                            className={`p-1 rounded-lg transition-colors ${isExpanded ? 'bg-teal-100 text-teal-700' : 'hover:bg-slate-100 text-slate-400'}`}
+                            className={`p-1 rounded-lg transition-colors ${isExpanded ? 'bg-[#FDB913]/20 text-[#e5a611]' : 'hover:bg-slate-100 text-slate-400'}`}
                           >
                             <ChevronRight className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
                           </button>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-xs font-mono font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded-md">
+                          <span className="text-xs font-mono font-bold text-[#FDB913] bg-[#FDB913]/10 px-2 py-1 rounded-md">
                             {loan.request_id}
                           </span>
                         </td>
@@ -204,7 +204,7 @@ export default function EquipmentReturn() {
                         <td className="px-6 py-4 text-right">
                           <button 
                             onClick={() => toggleExpand(loan.id)}
-                            className="text-xs font-bold text-teal-600 hover:underline"
+                            className="text-xs font-bold text-[#FDB913] hover:underline"
                           >
                             {isExpanded ? 'Hide Details' : 'View Assets'}
                           </button>
@@ -283,7 +283,7 @@ export default function EquipmentReturn() {
                   setItemsPerPage(val === 'all' ? 'all' : parseInt(val));
                   setCurrentPage(1);
                 }}
-                className="bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold px-2 py-1 outline-none focus:ring-2 focus:ring-teal-500/20"
+                className="bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold px-2 py-1 outline-none focus:ring-2 focus:ring-[#FDB913]/30"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -367,8 +367,8 @@ export default function EquipmentReturn() {
                         onClick={() => setReturnStatus('Available')}
                         className={`flex items-center justify-center gap-2 p-3 rounded-xl border font-bold text-xs transition-all ${
                           returnStatus === 'Available' 
-                            ? 'bg-teal-50 border-teal-200 text-teal-700 ring-2 ring-teal-500/10' 
-                            : 'bg-white border-slate-200 text-slate-500 hover:border-teal-200'
+                            ? 'bg-[#FDB913]/10 border-[#FDB913]/30 text-[#e5a611] ring-2 ring-[#FDB913]/10' 
+                            : 'bg-white border-slate-200 text-slate-500 hover:border-[#FDB913]/30'
                         }`}
                       >
                         <CheckCircle2 className="w-4 h-4" /> Available
@@ -392,7 +392,7 @@ export default function EquipmentReturn() {
                       type="date"
                       value={returnDate}
                       onChange={(e) => setReturnDate(e.target.value)}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
                     />
                   </div>
 
@@ -403,7 +403,7 @@ export default function EquipmentReturn() {
                       onChange={(e) => setReturnNotes(e.target.value)}
                       placeholder="Enter return details or damage report..."
                       rows={3}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all resize-none"
+                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all resize-none"
                     />
                   </div>
                 </div>

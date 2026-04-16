@@ -22,7 +22,7 @@ const CustomTooltip = ({ active, payload }: any) => {
         <p className="font-bold text-slate-800 mb-2">{data.name}</p>
         <div className="space-y-1">
           <p className="text-xs text-slate-500 flex justify-between gap-8">
-            Utilization: <span className="font-bold text-teal-600">{data.utilization}%</span>
+            Utilization: <span className="font-bold text-[#FDB913]">{data.utilization}%</span>
           </p>
           <p className="text-xs text-slate-500 flex justify-between gap-8">
             Deployed: <span className="font-bold text-slate-700">{data.deployed}</span>
@@ -80,7 +80,7 @@ export default function EquipmentUtilizationChart() {
         </div>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full bg-teal-500"></div>
+            <div className="w-2 h-2 rounded-full bg-[#FDB913]"></div>
             <span className="text-[10px] font-bold text-slate-400 uppercase">Utilization %</span>
           </div>
         </div>
@@ -112,7 +112,7 @@ export default function EquipmentUtilizationChart() {
               {chartData.map((entry, index) => (
                 <Cell 
                   key={`cell-${index}`} 
-                  fill={entry.utilization > 70 ? '#0d9488' : entry.utilization > 40 ? '#0ea5e9' : '#94a3b8'} 
+                  fill={entry.utilization > 70 ? '#FDB913' : entry.utilization > 40 ? '#0ea5e9' : '#94a3b8'} 
                 />
               ))}
               <LabelList 

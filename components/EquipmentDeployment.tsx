@@ -41,7 +41,13 @@ export default function EquipmentDeployment() {
   };
   
   // State for current deployment being built in modal
-  const [allocatedAssets, setAllocatedAssets] = useState<{ type: string, assetId: string, releaseDate: string }[]>([]);
+  const [allocatedAssets, setAllocatedAssets] = useState<{ 
+    type: string, 
+    assetId: string, 
+    releaseDate: string,
+    vendor_list: string,
+    duration_hour: number
+  }[]>([]);
 
   const filteredLoans = loans.filter(loan => {
     const searchLower = searchTerm.toLowerCase();
@@ -91,7 +97,9 @@ export default function EquipmentDeployment() {
       setAllocatedAssets([...allocatedAssets, { 
         type: nextItem.type, 
         assetId: '', 
-        releaseDate: new Date().toISOString().split('T')[0] 
+        releaseDate: new Date().toISOString().split('T')[0],
+        vendor_list: '',
+        duration_hour: 0
       }]);
     } else {
       alert('All requested items have been allocated in this session.');
@@ -102,7 +110,7 @@ export default function EquipmentDeployment() {
     setAllocatedAssets(allocatedAssets.filter((_, i) => i !== index));
   };
 
-  const handleAllocationChange = (index: number, field: 'type' | 'assetId' | 'releaseDate', value: string) => {
+  const handleAllocationChange = (index: number, field: 'type' | 'assetId' | 'releaseDate' | 'vendor_list' | 'duration_hour', value: any) => {
     const newAllocations = [...allocatedAssets];
     if (field === 'type') {
       newAllocations[index] = { ...newAllocations[index], type: value, assetId: '' };
@@ -110,6 +118,10 @@ export default function EquipmentDeployment() {
       newAllocations[index] = { ...newAllocations[index], assetId: value };
     } else if (field === 'releaseDate') {
       newAllocations[index] = { ...newAllocations[index], releaseDate: value };
+    } else if (field === 'vendor_list') {
+      newAllocations[index] = { ...newAllocations[index], vendor_list: value };
+    } else if (field === 'duration_hour') {
+      newAllocations[index] = { ...newAllocations[index], duration_hour: parseFloat(value) || 0 };
     }
     setAllocatedAssets(newAllocations);
   };
@@ -142,12 +154,12 @@ export default function EquipmentDeployment() {
           code_project: selectedLoan.project_id,
           project_name: selectedLoan.project_id,
           shipname: selectedLoan.shipname,
-          vendor_list: '',
-          vendor: '',
+          vendor_list: allocation.vendor_list,
+          vendor: selectedLoan.vendor,
           start_date: allocation.releaseDate,
           finish_date: selectedLoan.date_finish,
-          duration: 0,
-          duration_hour: 0,
+          duration: selectedLoan.duration,
+          duration_hour: allocation.duration_hour,
           return_date: '',
           return_status: 'Deployed',
           description: `Released on ${allocation.releaseDate}`
@@ -218,14 +230,14 @@ export default function EquipmentDeployment() {
               placeholder="Search by Request ID, Ship, or Project..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+              className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
             />
           </div>
           <div className="flex items-center justify-between sm:justify-end gap-3 w-full lg:w-auto">
-            <span className="text-[10px] sm:text-xs font-bold text-teal-700 bg-teal-50 px-3 py-1.5 rounded-full border border-teal-100 whitespace-nowrap">
+            <span className="text-[10px] sm:text-xs font-bold text-[#e5a611] bg-[#FDB913]/10 px-3 py-1.5 rounded-full border border-[#FDB913]/20 whitespace-nowrap">
               {filteredLoans.length} Pending
             </span>
-            <button className="text-xs font-bold text-teal-600 hover:underline flex items-center gap-1 whitespace-nowrap">
+            <button className="text-xs font-bold text-[#FDB913] hover:underline flex items-center gap-1 whitespace-nowrap">
               <FileText className="w-3 h-3" /> Export History
             </button>
           </div>
@@ -255,13 +267,13 @@ export default function EquipmentDeployment() {
                         <td className="px-6 py-4">
                           <button 
                             onClick={() => toggleExpand(loan.id)}
-                            className={`p-1 rounded-lg transition-colors ${isExpanded ? 'bg-teal-100 text-teal-700' : 'hover:bg-slate-100 text-slate-400'}`}
+                            className={`p-1 rounded-lg transition-colors ${isExpanded ? 'bg-[#FDB913]/20 text-[#e5a611]' : 'hover:bg-slate-100 text-slate-400'}`}
                           >
                             <ChevronRight className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-90' : ''}`} />
                           </button>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="text-xs font-mono font-bold text-teal-600 bg-teal-50 px-2 py-1 rounded-md">
+                          <span className="text-xs font-mono font-bold text-[#FDB913] bg-[#FDB913]/10 px-2 py-1 rounded-md">
                             {loan.request_id}
                           </span>
                         </td>
@@ -279,7 +291,7 @@ export default function EquipmentDeployment() {
                         <td className="px-6 py-4">
                           <div className="flex flex-col gap-1">
                             <div className="flex items-center gap-1.5 text-[11px] text-slate-600">
-                              <Calendar className="w-3 h-3 text-teal-500" />
+                              <Calendar className="w-3 h-3 text-[#FDB913]" />
                               <span>{loan.date_start}</span>
                             </div>
                             <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
@@ -290,12 +302,12 @@ export default function EquipmentDeployment() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex flex-wrap gap-1.5">
-                            {loan.items.map((item, i) => {
+                            {loan.items?.map((item, i) => {
                               const deployed = item.deployedQuantity || 0;
                               const isComplete = deployed === item.quantity;
                               return (
                                 <span key={i} className={`text-[9px] font-bold px-1.5 py-0.5 rounded border ${
-                                  isComplete ? 'bg-teal-50 text-teal-700 border-teal-100' : 'bg-slate-100 text-slate-600 border-slate-200'
+                                  isComplete ? 'bg-[#FDB913]/10 text-[#e5a611] border-[#FDB913]/20' : 'bg-slate-100 text-slate-600 border-slate-200'
                                 }`}>
                                   {deployed}/{item.quantity} {item.type}
                                 </span>
@@ -306,7 +318,7 @@ export default function EquipmentDeployment() {
                         <td className="px-6 py-4 text-right">
                           <button 
                             onClick={() => openDeploymentModal(loan)}
-                            className="inline-flex items-center gap-2 px-4 py-1.5 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition-colors shadow-sm"
+                            className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#FDB913] text-slate-900 rounded-xl text-xs font-bold hover:bg-[#e5a611] transition-colors shadow-sm"
                           >
                             <Plus className="w-3 h-3" /> Deploy
                           </button>
@@ -357,7 +369,7 @@ export default function EquipmentDeployment() {
                                             statusColor = 'bg-amber-100 text-amber-700 border-amber-200 animate-pulse';
                                           } else {
                                             statusLabel = `${diffDays} Days Left`;
-                                            statusColor = 'bg-teal-100 text-teal-700 border-teal-200';
+                                            statusColor = 'bg-[#FDB913]/20 text-[#e5a611] border-[#FDB913]/30';
                                           }
 
                                           return (
@@ -431,7 +443,7 @@ export default function EquipmentDeployment() {
                   setItemsPerPage(val === 'all' ? 'all' : parseInt(val));
                   setCurrentPage(1);
                 }}
-                className="bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold px-2 py-1 outline-none focus:ring-2 focus:ring-teal-500/20"
+                className="bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold px-2 py-1 outline-none focus:ring-2 focus:ring-[#FDB913]/30"
               >
                 <option value={10}>10</option>
                 <option value={25}>25</option>
@@ -460,7 +472,7 @@ export default function EquipmentDeployment() {
                   onClick={() => setCurrentPage(i + 1)}
                   className={`w-8 h-8 rounded-xl text-xs font-bold transition-all ${
                     currentPage === i + 1 
-                      ? 'bg-teal-600 text-white shadow-md shadow-teal-600/20' 
+                      ? 'bg-[#FDB913] text-slate-900 shadow-md shadow-[#FDB913]/20' 
                       : 'text-slate-500 hover:bg-slate-100'
                   }`}
                 >
@@ -498,7 +510,7 @@ export default function EquipmentDeployment() {
             >
               <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-teal-100 rounded-xl flex items-center justify-center text-teal-600">
+                  <div className="w-10 h-10 bg-[#FDB913]/20 rounded-xl flex items-center justify-center text-[#FDB913]">
                     <Package className="w-5 h-5" />
                   </div>
                   <div>
@@ -541,10 +553,10 @@ export default function EquipmentDeployment() {
                         const isComplete = totalAllocated === item.quantity;
                         
                         return (
-                          <div key={i} className={`p-4 rounded-2xl border transition-colors ${isComplete ? 'bg-teal-50 border-teal-100' : 'bg-white border-slate-100'}`}>
+                          <div key={i} className={`p-4 rounded-2xl border transition-colors ${isComplete ? 'bg-[#FDB913]/10 border-[#FDB913]/20' : 'bg-white border-slate-100'}`}>
                             <div className="flex justify-between items-center mb-1">
                               <span className="text-sm font-bold text-slate-800">{item.type}</span>
-                              <span className={`text-xs font-bold ${isComplete ? 'text-teal-600' : 'text-slate-400'}`}>
+                              <span className={`text-xs font-bold ${isComplete ? 'text-[#FDB913]' : 'text-slate-400'}`}>
                                 {totalAllocated} / {item.quantity}
                               </span>
                             </div>
@@ -552,7 +564,7 @@ export default function EquipmentDeployment() {
                               <motion.div 
                                 initial={{ width: 0 }}
                                 animate={{ width: `${Math.min(100, (totalAllocated / item.quantity) * 100)}%` }}
-                                className={`h-full ${isComplete ? 'bg-teal-500' : totalAllocated > item.quantity ? 'bg-red-500' : 'bg-teal-400'}`}
+                                className={`h-full ${isComplete ? 'bg-[#FDB913]' : totalAllocated > item.quantity ? 'bg-red-500' : 'bg-teal-400'}`}
                               />
                             </div>
                             {alreadyDeployed > 0 && (
@@ -573,7 +585,7 @@ export default function EquipmentDeployment() {
                       <button 
                         type="button" 
                         onClick={handleAddAllocation}
-                        className="flex items-center gap-2 px-3 py-1.5 bg-teal-50 text-teal-600 rounded-lg text-xs font-bold hover:bg-teal-100 transition-colors"
+                        className="flex items-center gap-2 px-3 py-1.5 bg-[#FDB913]/10 text-[#FDB913] rounded-lg text-xs font-bold hover:bg-[#FDB913]/20 transition-colors"
                       >
                         <Plus className="w-3 h-3" /> Add Asset
                       </button>
@@ -587,7 +599,7 @@ export default function EquipmentDeployment() {
                           <button 
                             type="button" 
                             onClick={handleAddAllocation}
-                            className="mt-4 px-6 py-2 bg-teal-50 text-teal-600 rounded-xl text-xs font-bold hover:bg-teal-100 transition-colors"
+                            className="mt-4 px-6 py-2 bg-[#FDB913]/10 text-[#FDB913] rounded-xl text-xs font-bold hover:bg-[#FDB913]/20 transition-colors"
                           >
                             Add First Asset
                           </button>
@@ -612,7 +624,7 @@ export default function EquipmentDeployment() {
                                 <select 
                                   value={allocation.type}
                                   onChange={(e) => handleAllocationChange(index, 'type', e.target.value)}
-                                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-teal-500/20"
+                                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30"
                                 >
                                   {selectedLoan.items.map(item => (
                                     <option key={item.type} value={item.type}>{item.type}</option>
@@ -624,7 +636,7 @@ export default function EquipmentDeployment() {
                                 <select 
                                   value={allocation.assetId}
                                   onChange={(e) => handleAllocationChange(index, 'assetId', e.target.value)}
-                                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-teal-500/20"
+                                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30"
                                 >
                                   <option value="">Select Asset...</option>
                                   {availableAssets.map(asset => (
@@ -638,7 +650,27 @@ export default function EquipmentDeployment() {
                                   type="date"
                                   value={allocation.releaseDate}
                                   onChange={(e) => handleAllocationChange(index, 'releaseDate', e.target.value)}
-                                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-teal-500/20"
+                                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30"
+                                />
+                              </div>
+                              <div className="flex-1 min-w-[140px] space-y-1">
+                                <label className="text-[10px] font-bold text-slate-400 uppercase">Vendor List</label>
+                                <input 
+                                  type="text"
+                                  value={allocation.vendor_list}
+                                  onChange={(e) => handleAllocationChange(index, 'vendor_list', e.target.value)}
+                                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30"
+                                  placeholder="Vendor name..."
+                                />
+                              </div>
+                              <div className="w-24 space-y-1">
+                                <label className="text-[10px] font-bold text-slate-400 uppercase">Duration (H)</label>
+                                <input 
+                                  type="number"
+                                  value={allocation.duration_hour}
+                                  onChange={(e) => handleAllocationChange(index, 'duration_hour', e.target.value)}
+                                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30"
+                                  placeholder="Hours"
                                 />
                               </div>
                               <button 
@@ -674,7 +706,7 @@ export default function EquipmentDeployment() {
                 <button 
                   onClick={handleConfirmDeployment}
                   disabled={allocatedAssets.length === 0 || allocatedAssets.some(a => !a.assetId)}
-                  className="px-8 py-2.5 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 transition-colors shadow-lg shadow-teal-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-8 py-2.5 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-lg shadow-[#FDB913]/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Confirm & Deploy
                 </button>

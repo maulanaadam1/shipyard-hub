@@ -80,7 +80,7 @@ export default function UtilityDashboard() {
                 onClick={() => setTimeRange(range)}
                 className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all ${
                   timeRange === range 
-                    ? 'bg-teal-600 text-white shadow-md' 
+                    ? 'bg-[#FDB913] text-slate-900 shadow-md' 
                     : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
@@ -88,7 +88,7 @@ export default function UtilityDashboard() {
               </button>
             ))}
           </div>
-          <button className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-500 hover:text-teal-600 transition-colors shadow-sm">
+          <button className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-500 hover:text-[#FDB913] transition-colors shadow-sm">
             <Download className="w-4 h-4" />
           </button>
         </div>
@@ -144,8 +144,8 @@ export default function UtilityDashboard() {
               <AreaChart data={trendData}>
                 <defs>
                   <linearGradient id="colorRate" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#0d9488" stopOpacity={0.1}/>
-                    <stop offset="95%" stopColor="#0d9488" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#FDB913" stopOpacity={0.1}/>
+                    <stop offset="95%" stopColor="#FDB913" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -169,7 +169,7 @@ export default function UtilityDashboard() {
                 <Area 
                   type="monotone" 
                   dataKey="rate" 
-                  stroke="#0d9488" 
+                  stroke="#FDB913" 
                   strokeWidth={3}
                   fillOpacity={1} 
                   fill="url(#colorRate)" 
@@ -187,7 +187,7 @@ export default function UtilityDashboard() {
               <div key={i} className="space-y-2">
                 <div className="flex justify-between text-sm">
                   <span className="font-bold text-slate-700">{cat.name}</span>
-                  <span className="text-teal-600 font-bold">{cat.utilization}%</span>
+                  <span className="text-[#FDB913] font-bold">{cat.utilization}%</span>
                 </div>
                 <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                   <motion.div 
@@ -195,7 +195,7 @@ export default function UtilityDashboard() {
                     animate={{ width: `${cat.utilization}%` }}
                     transition={{ duration: 1, delay: i * 0.1 }}
                     className={`h-full rounded-full ${
-                      cat.utilization > 80 ? 'bg-teal-500' : 
+                      cat.utilization > 80 ? 'bg-[#FDB913]' : 
                       cat.utilization > 50 ? 'bg-sky-500' : 'bg-slate-400'
                     }`}
                   />
@@ -214,7 +214,7 @@ export default function UtilityDashboard() {
       <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <h3 className="font-display font-bold text-lg text-slate-800">Asset Efficiency Ranking</h3>
-          <button className="text-xs font-bold text-teal-600 hover:text-teal-700 flex items-center gap-1">
+          <button className="text-xs font-bold text-[#FDB913] hover:text-[#e5a611] flex items-center gap-1">
             View All Assets <ArrowUpRight className="w-3 h-3" />
           </button>
         </div>
@@ -252,14 +252,14 @@ export default function UtilityDashboard() {
                   <td className="px-8 py-4">
                     <div className="flex items-center justify-center gap-2">
                       <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                        <div className="h-full bg-teal-500 rounded-full" style={{ width: '75%' }}></div>
+                        <div className="h-full bg-[#FDB913] rounded-full" style={{ width: '75%' }}></div>
                       </div>
                       <span className="text-[10px] font-bold text-slate-500">75%</span>
                     </div>
                   </td>
                   <td className="px-8 py-4 text-right">
                     <span className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider ${
-                      asset.status === 'Available' ? 'bg-teal-50 text-teal-600' :
+                      asset.status === 'Available' ? 'bg-[#FDB913]/10 text-[#FDB913]' :
                       asset.status === 'Deployed' ? 'bg-sky-50 text-sky-600' :
                       'bg-amber-50 text-amber-600'
                     }`}>
@@ -278,7 +278,7 @@ export default function UtilityDashboard() {
 
 function StatCard({ title, value, icon: Icon, trend, trendUp, color }: any) {
   const colors: any = {
-    teal: 'bg-teal-50 text-teal-600',
+    teal: 'bg-[#FDB913]/10 text-[#FDB913]',
     sky: 'bg-sky-50 text-sky-600',
     amber: 'bg-amber-50 text-amber-600',
     indigo: 'bg-indigo-50 text-indigo-600',
