@@ -514,14 +514,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       projects, setProjects,
       currentUser, setCurrentUser
     }}>
-      {!hasInitialLoaded ? (
-        <div suppressHydrationWarning className="h-screen w-screen flex items-center justify-center bg-slate-50">
-          <div suppressHydrationWarning className="flex flex-col items-center gap-4">
-            <div suppressHydrationWarning className="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
-            <p className="text-sm font-bold text-slate-500">Syncing with Supabase...</p>
-          </div>
-        </div>
-      ) : children}
+      {children}
     </DataContext.Provider>
   );
 }
