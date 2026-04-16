@@ -195,6 +195,7 @@ interface DataContextType {
   setProjects: React.Dispatch<React.SetStateAction<Project[]>>;
   currentUser: User | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
+  isAuthLoading: boolean;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -358,6 +359,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [ships, setShips] = useState<Ship[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [hasInitialLoaded, setHasInitialLoaded] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -462,6 +464,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, () => fetchData())
       .subscribe();
 
+    // Check initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        setIsAuthLoading(false);
+      }
+    });
+
     // Listen for auth changes
     const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session?.user) {
@@ -483,6 +492,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
       } else {
         setCurrentUser(null);
       }
+      setIsAuthLoading(false);
     });
 
     return () => {
@@ -512,7 +522,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       companies, setCompanies,
       ships, setShips,
       projects, setProjects,
-      currentUser, setCurrentUser
+      currentUser, setCurrentUser,
+      isAuthLoading
     }}>
       {children}
     </DataContext.Provider>

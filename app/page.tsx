@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 import Dashboard from '@/components/Dashboard';
@@ -18,10 +19,37 @@ import UtilityDashboard from '@/components/UtilityDashboard';
 import LandingPage from '@/components/LandingPage';
 import { useData } from '@/context/DataContext';
 
-export default function Home() {
-  const { currentUser } = useData();
-  const [activeTab, setActiveTab] = useState('Dashboard');
+function DashboardContent() {
+  const { currentUser, isAuthLoading } = useData();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  
+  const [activeTab, setActiveTab] = useState(tabParam || 'Dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (tabParam && tabParam !== activeTab) {
+      setActiveTab(tabParam);
+    }
+  }, [tabParam]);
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    setIsSidebarOpen(false);
+    router.push(`/?tab=${encodeURIComponent(tab)}`);
+  };
+
+  if (isAuthLoading) {
+    return (
+      <div className="h-screen w-screen flex items-center justify-center bg-slate-50">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-[#FDB913] border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-sm font-bold text-slate-500">Authenticating...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!currentUser) {
     return <LandingPage />;
@@ -41,10 +69,7 @@ export default function Home() {
         fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ease-in-out lg:relative lg:translate-x-0
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
-        <Sidebar activeTab={activeTab} onTabChange={(tab) => {
-          setActiveTab(tab);
-          setIsSidebarOpen(false);
-        }} />
+        <Sidebar activeTab={activeTab} onTabChange={handleTabChange} />
       </div>
 
       <main className="flex-1 flex flex-col min-w-0 w-full">
@@ -127,5 +152,17 @@ export default function Home() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="h-screen w-screen flex items-center justify-center bg-slate-50">
+        <div className="w-12 h-12 border-4 border-[#FDB913] border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   );
 }
