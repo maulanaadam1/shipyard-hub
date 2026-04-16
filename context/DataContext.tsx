@@ -41,7 +41,7 @@ export interface ApprovalStep {
 export interface LoanRequest {
   id: string;
   date_created: string;
-  request_id: string; 
+  request_id: string;
   project_id: string;
   shipname: string;
   vendor: string;
@@ -200,153 +200,6 @@ interface DataContextType {
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
 
-// --- Initial Data ---
-
-const initialFleet: Equipment[] = [
-  {
-    id: '60a1e9c4',
-    created_date: '3/8/2025 13:24:09',
-    no_asset: 'CNR 1',
-    category: 'EQUIPMENT',
-    location: 'WAREHOUSE FACILITY',
-    item: 'SMAW',
-    brand: 'WEICO',
-    no: '1',
-    name: 'Mesinlas SMAW 400A',
-    type_capacity: '20A/20.8V-400 A/36V',
-    year: '2011',
-    alias: 'WEICO 1',
-    product_identifier: 'WEICO 1 20A/20.8V-400 A/36V',
-    status: 'Available'
-  },
-  {
-    id: '0d85973b',
-    created_date: '3/8/2025 13:24:09',
-    no_asset: 'CNR 4',
-    category: 'EQUIPMENT',
-    location: 'WAREHOUSE FACILITY',
-    item: 'SMAW',
-    brand: 'WEICO',
-    no: '2',
-    name: 'Mesinlas SMAW 400A',
-    type_capacity: '20A/20.8V-400 A/36V',
-    year: '2011',
-    alias: 'WEICO 2',
-    product_identifier: 'WEICO 2 20A/20.8V-400 A/36V',
-    status: 'Available'
-  },
-  {
-    id: '31769070',
-    created_date: '3/8/2025 13:24:09',
-    no_asset: 'CNR 8',
-    category: 'EQUIPMENT',
-    location: 'WAREHOUSE FACILITY',
-    item: 'SMAW',
-    brand: 'WEICO',
-    no: '3',
-    name: 'Mesinlas SMAW 400A',
-    type_capacity: '20A/20.8V-400 A/36V',
-    year: '2011',
-    alias: 'WEICO 3',
-    product_identifier: 'WEICO 3 20A/20.8V-400 A/36V',
-    status: 'Available'
-  },
-  {
-    id: '5270f287',
-    created_date: '3/8/2025 13:24:09',
-    no_asset: 'DAIDEN 1',
-    category: 'EQUIPMENT',
-    location: 'WAREHOUSE FACILITY',
-    item: 'SMAW',
-    brand: 'WEICO',
-    no: '4',
-    name: 'Mesinlas SMAW 400A',
-    type_capacity: '20A/20.8V-400 A/36V',
-    year: '2011',
-    alias: 'WEICO 4',
-    product_identifier: 'WEICO 4 20A/20.8V-400 A/36V',
-    status: 'Available'
-  },
-  {
-    id: '04e7dfc3',
-    created_date: '3/8/2025 13:24:09',
-    no_asset: 'DAIDEN 2',
-    category: 'EQUIPMENT',
-    location: 'WAREHOUSE FACILITY',
-    item: 'SMAW',
-    brand: 'WEICO',
-    no: '5',
-    name: 'Mesinlas SMAW 400A',
-    type_capacity: '20A/20.8V-400 A/36V',
-    year: '2011',
-    alias: 'WEICO 5',
-    product_identifier: 'WEICO 5 20A/20.8V-400 A/36V',
-    status: 'Available'
-  },
-  {
-    id: 'blw-1',
-    created_date: '3/8/2025 13:24:09',
-    no_asset: 'BLW 01',
-    category: 'EQUIPMENT',
-    location: 'WAREHOUSE FACILITY',
-    item: 'Blower',
-    brand: 'Industrial',
-    no: '6',
-    name: 'Industrial Blower 1',
-    type_capacity: 'High Power',
-    year: '2022',
-    alias: 'BLW 1',
-    product_identifier: 'BLW 1 High Power',
-    status: 'Available'
-  },
-  {
-    id: 'blw-2',
-    created_date: '3/8/2025 13:24:09',
-    no_asset: 'BLW 02',
-    category: 'EQUIPMENT',
-    location: 'WAREHOUSE FACILITY',
-    item: 'Blower',
-    brand: 'Industrial',
-    no: '7',
-    name: 'Industrial Blower 2',
-    type_capacity: 'High Power',
-    year: '2022',
-    alias: 'BLW 2',
-    product_identifier: 'BLW 2 High Power',
-    status: 'Available'
-  }
-];
-
-const initialLoans: LoanRequest[] = [
-  {
-    id: '3bcd0f4b',
-    date_created: '9/4/2019 0:00:00',
-    request_id: 'ERQ/2019/09/002/YWTS',
-    project_id: 'DRP19BBBG005/YWTS',
-    shipname: 'SALIKI LIMA',
-    vendor: '',
-    work_order: 'WO1909014/YWTS',
-    date_start: '2019-09-04',
-    date_finish: '2019-09-05',
-    duration: 1,
-    lampiran: '',
-    change: '',
-    status: 'Approved',
-    items: [{ type: 'SMAW', quantity: 2, deployedQuantity: 0 }, { type: 'Blower', quantity: 1, deployedQuantity: 0 }],
-    approval_steps: [
-      { status: 'Draft', label: 'Request Created', date: '9/4/2019 08:00', user: 'Admin', isCompleted: true, isCurrent: false },
-      { status: 'Pending', label: 'Department Approval', date: '9/4/2019 10:30', user: 'HOD Maintenance', comment: 'Verified requirements', isCompleted: true, isCurrent: false },
-      { status: 'Approved', label: 'Final Approval', date: '9/4/2019 14:20', user: 'General Manager', comment: 'Approved for project', isCompleted: true, isCurrent: true }
-    ]
-  }
-];
-
-const initialUsers: User[] = [
-  { id: '1', name: 'Adam Maulana', email: 'maulana.adam1@gmail.com', role: 'Admin' },
-  { id: '2', name: 'John Manager', email: 'manager@shipyard.com', role: 'Manager' },
-  { id: '3', name: 'Staff User', email: 'staff@shipyard.com', role: 'Staff' },
-];
-
 // --- Provider ---
 
 export function DataProvider({ children }: { children: ReactNode }) {
@@ -500,8 +353,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
     const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       clearTimeout(authTimeout);
       if (session?.user) {
-        const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || session.user.email === 'superadmin@shipyard.local';
-        const isSuperAdmin = session.user.email === 'superadmin@shipyard.local';
+        const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
+        const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || session.user.email === `${defaultAdminUsername}@shipyard.local`;
+        const isSuperAdmin = session.user.email === `${defaultAdminUsername}@shipyard.local`;
         
         try {
           // Fetch profile first to get accurate role and data
@@ -541,7 +395,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
             console.error('Error fetching profile directly:', directError.message);
           }
 
-          let finalRole = isDefaultAdmin ? 'Admin' : 'Staff';
+          let finalRole: 'Admin' | 'Manager' | 'Staff' = isDefaultAdmin ? 'Admin' : 'Staff';
           let finalName = isSuperAdmin ? 'Super Admin' : (session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown');
           let finalAvatar = session.user.user_metadata?.avatar_url || '';
 
@@ -551,7 +405,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
               await supabase.from('profiles').update({ role: 'Admin' }).eq('id', session.user.id);
               finalRole = 'Admin';
             } else {
-              finalRole = profile.role || 'Staff';
+              finalRole = (profile.role as 'Admin' | 'Manager' | 'Staff') || 'Staff';
             }
             finalName = profile.name || finalName;
             finalAvatar = profile.avatar_url || finalAvatar;

@@ -54,7 +54,8 @@ export default function UserManagement() {
     
     let errorMsg = '';
     if (editingUser) {
-      if ((editingUser.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || editingUser.email === 'superadmin@shipyard.local' || editingUser.name === 'Super Admin') && formData.role !== 'Admin') {
+      const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
+      if ((editingUser.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || editingUser.email === `${defaultAdminUsername}@shipyard.local` || editingUser.name === 'Super Admin') && formData.role !== 'Admin') {
         alert("You cannot change the role of the default administrator.");
         return;
       }
@@ -100,7 +101,8 @@ export default function UserManagement() {
       alert("You cannot delete your own account.");
       return;
     }
-    if (email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || email === 'superadmin@shipyard.local' || name === 'Super Admin') {
+    const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
+    if (email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || email === `${defaultAdminUsername}@shipyard.local` || name === 'Super Admin') {
       alert("You cannot delete the default administrator account.");
       return;
     }

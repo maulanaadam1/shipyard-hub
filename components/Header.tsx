@@ -45,21 +45,47 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
     }, 30000);
 
     try {
+      const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
+      const defaultAdminPassword = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_PASSWORD || 'admin123';
+      const isDefaultAdminLogin = identifier === defaultAdminUsername && password === defaultAdminPassword;
+
       // If it's a username (no @), append dummy domain
       const isEmail = identifier.includes('@');
       const authEmail = isEmail ? identifier : `${identifier}@shipyard.local`;
 
       if (authMode === 'login') {
         const { error } = await supabase.auth.signInWithPassword({ email: authEmail, password });
-        if (error) throw error;
+        
+        if (error) {
+          // Auto-create default admin if it doesn't exist
+          if (isDefaultAdminLogin && error.message.includes('Invalid login credentials')) {
+            const { data: authData, error: signUpError } = await supabase.auth.signUp({ email: authEmail, password });
+            if (signUpError) throw signUpError;
+            
+            if (authData.user) {
+              await supabase.from('profiles').upsert({ 
+                id: authData.user.id, 
+                name: 'Super Admin', 
+                email: '', 
+                role: 'Admin' 
+              }, { onConflict: 'id' });
+              
+              // Sign in after creation
+              const { error: retryError } = await supabase.auth.signInWithPassword({ email: authEmail, password });
+              if (retryError) throw retryError;
+            }
+          } else {
+            throw error;
+          }
+        }
         setIsLoginModalOpen(false);
       } else {
         const { data: authData, error: signUpError } = await supabase.auth.signUp({ email: authEmail, password });
         if (signUpError) throw signUpError;
         
         if (authData.user) {
-          const isDefaultAdmin = authEmail === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || authEmail === 'superadmin@shipyard.local';
-          const displayName = !isEmail && identifier === 'superadmin' ? 'Super Admin' : (isEmail ? authEmail.split('@')[0] : identifier);
+          const isDefaultAdmin = authEmail === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || identifier === defaultAdminUsername;
+          const displayName = !isEmail && identifier === defaultAdminUsername ? 'Super Admin' : (isEmail ? authEmail.split('@')[0] : identifier);
           const displayEmail = isEmail ? authEmail : '';
 
           await supabase.from('profiles').upsert({ 
