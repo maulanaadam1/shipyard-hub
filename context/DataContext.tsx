@@ -238,7 +238,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         supabase.from('vendors').select('*').order('vendor', { ascending: true }),
         supabase.from('companies').select('*').order('company_name', { ascending: true }),
         supabase.from('ships').select('*').order('shipname', { ascending: true }),
-        supabase.from('projects').select('*').order('id_siaga', { ascending: false })
+        supabase.from('projects').select('*').order('create_date', { ascending: false })
       ]);
 
       results.forEach((result, index) => {
