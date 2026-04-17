@@ -47,6 +47,8 @@ export default function EquipmentLoans() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLoan, setSelectedLoan] = useState<LoanRequest | null>(null);
   const [requestedItems, setRequestedItems] = useState<RequestedItem[]>([]);
+  const [modalProjectId, setModalProjectId] = useState('');
+  const [modalShipName, setModalShipName] = useState('');
   
   // Paging & Bulk States
   const [currentPage, setCurrentPage] = useState(1);
@@ -136,13 +138,17 @@ export default function EquipmentLoans() {
 
   const openAddModal = () => {
     setSelectedLoan(null);
-    setRequestedItems([]);
+    setRequestedItems([{ type: equipmentTypes[0], quantity: 1}]);
+    setModalProjectId('');
+    setModalShipName('');
     setIsModalOpen(true);
   };
 
   const openEditModal = (loan: LoanRequest) => {
     setSelectedLoan(loan);
-    setRequestedItems(loan.items);
+    setRequestedItems(loan.items || []);
+    setModalProjectId(loan.project_id || '');
+    setModalShipName(loan.shipname || '');
     setIsModalOpen(true);
   };
 
@@ -518,26 +524,34 @@ export default function EquipmentLoans() {
                 {/* Check if editable: New request OR Draft status */}
                 {(() => {
                   const isEditable = !selectedLoan || selectedLoan.status === 'Draft';
-                  const currentYear = new Date().getFullYear();
                   
-                  // Filter projects from the current year and the previous year (Last 2 Years)
-                  const activeProjects = projects.filter(p => {
-                    // Try to get year from 'year' field, then 'create_date', then 'idproject' prefix (e.g. DRP19...)
+                  // Extract years for all projects to find the latest available year dynamically
+                  const projectYears = projects.map(p => {
+                    if (p.year && Number(p.year) > 2000) return Number(p.year);
+                    if (p.create_date) return new Date(p.create_date).getFullYear();
+                    if (p.idproject && p.idproject.length >= 5) {
+                      const match = p.idproject.match(/\d{2}/);
+                      if (match) return 2000 + parseInt(match[0]);
+                    }
+                    return 0;
+                  }).filter(y => !isNaN(y) && y > 2000);
+                  
+                  const maxYear = projectYears.length > 0 ? Math.max(...projectYears) : new Date().getFullYear();
+                  
+                  // Filter projects from the max year and the previous year (Last 2 Years)
+                  const activeProjects = projects.filter((p, index) => {
                     let pYear = 0;
-                    if (p.year) {
+                    if (p.year && Number(p.year) > 2000) {
                       pYear = Number(p.year);
                     } else if (p.create_date) {
                       pYear = new Date(p.create_date).getFullYear();
                     } else if (p.idproject && p.idproject.length >= 5) {
-                      // Extract 2 digits after 'DRP' or similar prefix
                       const match = p.idproject.match(/\d{2}/);
-                      if (match) {
-                        pYear = 2000 + parseInt(match[0]);
-                      }
+                      if (match) pYear = 2000 + parseInt(match[0]);
                     }
                     
-                    // Show only from Current Year and Previous Year (e.g. 2026, 2025)
-                    return pYear >= currentYear - 1;
+                    // Show from Max Year and Previous Year or generic fallback
+                    return pYear >= maxYear - 1 || (!pYear && index < 50); // Fallback to include unparseable projects if we have to
                   });
 
                   return (
@@ -547,18 +561,17 @@ export default function EquipmentLoans() {
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Project ID</label>
                     <select 
                       name="project_id"
-                      defaultValue={selectedLoan?.project_id}
+                      value={modalProjectId}
                       required
                       disabled={!isEditable}
                       onChange={(e) => {
                         const selectedId = e.target.value;
+                        setModalProjectId(selectedId);
                         const project = projects.find(p => p.idproject === selectedId);
                         if (project && project.shipname) {
-                          const form = (e.target as HTMLSelectElement).form;
-                          const shipInput = form?.elements.namedItem('shipname') as HTMLInputElement;
-                          if (shipInput) {
-                            shipInput.value = project.shipname;
-                          }
+                          setModalShipName(project.shipname);
+                        } else {
+                          setModalShipName('');
                         }
                       }}
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-60"
@@ -575,7 +588,8 @@ export default function EquipmentLoans() {
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Ship Name</label>
                     <input 
                       name="shipname"
-                      defaultValue={selectedLoan?.shipname}
+                      value={modalShipName}
+                      onChange={(e) => setModalShipName(e.target.value)}
                       list="ships-list"
                       required
                       disabled={!isEditable}
