@@ -32,6 +32,7 @@ function DashboardContent() {
     if (tabParam && tabParam !== activeTab) {
       setActiveTab(tabParam);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps, react-hooks/set-state-in-effect
   }, [tabParam]);
 
   const handleTabChange = (tab: string) => {

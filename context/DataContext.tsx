@@ -7,19 +7,18 @@ import { supabase } from '@/lib/supabase';
 
 export interface Equipment {
   id: string;
-  created_date: string;
+  created_at?: string;
+  updated_at?: string;
+  source: string;
   no_asset: string;
-  category: string;
-  location: string;
-  item: string;
+  type: string;
   brand: string;
-  no: string;
   name: string;
-  type_capacity: string;
-  year: string;
+  capacity: string;
+  year_invest: string;
+  available: string; // Used to be status
   alias: string;
-  product_identifier: string;
-  status: 'Available' | 'Deployed' | 'Maintenance' | 'Damaged';
+  price: string;
 }
 
 export interface RequestedItem {
@@ -231,7 +230,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
     try {
       const results = await Promise.allSettled([
-        supabase.from('equipment').select('*').order('created_date', { ascending: false }),
+        supabase.from('equipment').select('*').order('created_at', { ascending: false }),
         supabase.from('loan_requests').select('*').order('date_created', { ascending: false }),
         supabase.from('deployment_records').select('*').order('create_date', { ascending: false }),
         supabase.from('profiles').select('*'),

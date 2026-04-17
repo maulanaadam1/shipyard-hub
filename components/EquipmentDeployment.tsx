@@ -192,7 +192,7 @@ export default function EquipmentDeployment() {
       for (const update of assetUpdates) {
         const { error: assetError } = await supabase
           .from('equipment')
-          .update({ status: update.status })
+          .update({ available: update.status })
           .eq('id', update.id);
         if (assetError) throw assetError;
       }
@@ -607,8 +607,8 @@ export default function EquipmentDeployment() {
                       ) : (
                         allocatedAssets.map((allocation, index) => {
                           const availableAssets = assets.filter(a => 
-                            a.item === allocation.type && 
-                            (a.status === 'Available' || allocation.assetId === a.id) &&
+                            a.type === allocation.type && 
+                            (a.available === 'Available' || allocation.assetId === a.id) &&
                             !allocatedAssets.some((other, otherIdx) => otherIdx !== index && other.assetId === a.id)
                           );
 

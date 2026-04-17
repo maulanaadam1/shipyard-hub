@@ -9,13 +9,13 @@ export default function ActiveRepairsQueue() {
   const { fleet } = useData();
   
   const repairs = fleet
-    .filter(a => a.status === 'Damaged' || a.status === 'Maintenance')
+    .filter(a => a.available === 'Damaged' || a.available === 'Maintenance')
     .map(a => ({
       id: a.no_asset,
-      type: a.category,
+      type: a.type,
       issue: a.name,
-      priority: a.status === 'Damaged' ? 'High' : 'Medium',
-      time: a.created_date ? new Date(a.created_date).toLocaleDateString() : 'Recently'
+      priority: a.available === 'Damaged' ? 'High' : 'Medium',
+      time: a.created_at ? new Date(a.created_at).toLocaleDateString() : 'Recently'
     }))
     .slice(0, 5);
 
