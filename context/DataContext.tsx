@@ -371,6 +371,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
           if (isAuthLoading) {
             const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
             const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || session.user.email === `${defaultAdminUsername}@shipyard.local`;
+            
             let fallbackRole = 'Staff';
             if (isDefaultAdmin) fallbackRole = 'Admin';
             else if (session.user.user_metadata?.role) {
@@ -424,6 +425,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         const setFallbackUser = () => {
           const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
           const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || session.user.email === `${defaultAdminUsername}@shipyard.local`;
+          
           let fallbackRole = 'Staff';
           if (isDefaultAdmin) fallbackRole = 'Admin';
           else if (session.user.user_metadata?.role) {
@@ -497,7 +499,16 @@ export function DataProvider({ children }: { children: ReactNode }) {
             console.error('Error fetching profile directly:', directError.message);
           }
 
-          let finalRole: 'Admin' | 'Manager' | 'Staff' = isDefaultAdmin ? 'Admin' : 'Staff';
+          // Initial robust fallback
+          let fallbackRole = 'Staff';
+          if (isDefaultAdmin) fallbackRole = 'Admin';
+          else if (session.user.user_metadata?.role) {
+             let metaRole = session.user.user_metadata.role.toString().trim();
+             metaRole = metaRole.charAt(0).toUpperCase() + metaRole.slice(1).toLowerCase();
+             if (['Admin','Manager','Staff'].includes(metaRole)) fallbackRole = metaRole;
+          }
+
+          let finalRole: 'Admin' | 'Manager' | 'Staff' = fallbackRole as 'Admin' | 'Manager' | 'Staff';
           let finalName = isSuperAdmin ? 'Super Admin' : (session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown');
           let finalAvatar = session.user.user_metadata?.avatar_url || '';
 
@@ -515,6 +526,11 @@ export function DataProvider({ children }: { children: ReactNode }) {
             }
             finalName = profile.name || finalName;
             finalAvatar = profile.avatar_url || finalAvatar;
+            
+            // Sync database role to JWT user_metadata so hard refreshes have immediate access
+            if (session.user.user_metadata?.role !== finalRole) {
+              supabase.auth.updateUser({ data: { role: finalRole } }).then();
+            }
           } else if (!directError && !fetchError) {
             // Profile truly doesn't exist (e.g., first time Google Login). Create it.
             const newProfile = {
