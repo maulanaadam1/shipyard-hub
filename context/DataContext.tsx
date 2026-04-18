@@ -275,6 +275,27 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setMounted(true);
     fetchData(true);
 
+    const updateActivity = () => {
+      localStorage.setItem('lastActivity', Date.now().toString());
+    };
+
+    // Throttle the activity update to avoid excessive writes
+    let timeoutId: NodeJS.Timeout;
+    const throttledUpdateActivity = () => {
+      if (timeoutId) return;
+      timeoutId = setTimeout(() => {
+        updateActivity();
+        timeoutId = undefined as any;
+      }, 60000); // Only update once per minute max
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('mousemove', throttledUpdateActivity);
+      window.addEventListener('keydown', throttledUpdateActivity);
+      window.addEventListener('click', throttledUpdateActivity);
+      window.addEventListener('scroll', throttledUpdateActivity);
+    }
+
     // --- Realtime Subscriptions ---
     const fleetSubscription = supabase
       .channel('fleet_changes')
@@ -339,23 +360,77 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
     // Check initial session
     supabase.auth.getSession().then(({ data: { session }, error }) => {
+      console.log('getSession Result:', { hasSession: !!session, error });
       if (!session || error) {
         clearTimeout(authTimeout);
         setIsAuthLoading(false);
+      } else {
+        // If we have a session, we should not immediately drop to login screen
+        // In case onAuthStateChange is slow, set a fallback after 2s
+        setTimeout(() => {
+          if (isAuthLoading) {
+            const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
+            const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || session.user.email === `${defaultAdminUsername}@shipyard.local`;
+            setCurrentUser({
+              id: session.user.id,
+              name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown',
+              email: session.user.email || '',
+              role: isDefaultAdmin ? 'Admin' : 'Staff',
+              avatar: session.user.user_metadata?.avatar_url
+            });
+            setIsAuthLoading(false);
+            clearTimeout(authTimeout);
+          }
+        }, 2000);
       }
-    }).catch(() => {
+    }).catch((e) => {
+      console.error('getSession Error:', e);
       clearTimeout(authTimeout);
       setIsAuthLoading(false);
     });
 
     // Listen for auth changes
     const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('onAuthStateChange Triggered:', event, { hasSession: !!session, hasUser: !!session?.user });
       clearTimeout(authTimeout);
+      
+      // Idle Session Expiration Check
+      if (session?.user && typeof window !== 'undefined') {
+        const lastActivity = localStorage.getItem('lastActivity');
+        const now = Date.now();
+        const TWELVE_HOURS = 12 * 60 * 60 * 1000;
+        
+        if (lastActivity && ((now - parseInt(lastActivity)) > TWELVE_HOURS)) {
+          // Session expired due to idle
+          localStorage.removeItem('lastActivity');
+          await supabase.auth.signOut();
+          setCurrentUser(null);
+          setIsAuthLoading(false);
+          return;
+        }
+        // Update activity because log in/restore means user is active
+        localStorage.setItem('lastActivity', now.toString());
+      }
+
       if (session?.user) {
+        // Fallback user function
+        const setFallbackUser = () => {
+          const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
+          const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || session.user.email === `${defaultAdminUsername}@shipyard.local`;
+          setCurrentUser({
+            id: session.user.id,
+            name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown',
+            email: session.user.email || '',
+            role: isDefaultAdmin ? 'Admin' : 'Staff',
+            avatar: session.user.user_metadata?.avatar_url
+          });
+          setIsAuthLoading(false);
+        };
+
         // Set a local timeout for this specific auth state change to prevent hanging
         const localAuthTimeout = setTimeout(() => {
-          setIsAuthLoading(false);
           console.warn('Profile fetch in auth state change timed out.');
+          setFallbackUser();
         }, 5000);
 
         const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
@@ -466,6 +541,12 @@ export function DataProvider({ children }: { children: ReactNode }) {
     });
 
     return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('mousemove', throttledUpdateActivity);
+        window.removeEventListener('keydown', throttledUpdateActivity);
+        window.removeEventListener('click', throttledUpdateActivity);
+        window.removeEventListener('scroll', throttledUpdateActivity);
+      }
       fleetSubscription.unsubscribe();
       loansSubscription.unsubscribe();
       deploymentsSubscription.unsubscribe();

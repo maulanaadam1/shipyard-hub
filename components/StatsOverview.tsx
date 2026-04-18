@@ -8,9 +8,9 @@ export default function StatsOverview() {
   const { fleet, deployments } = useData();
 
   const totalEquipment = fleet.length;
-  const activeLoans = fleet.filter(a => a.status === 'Deployed').length;
-  const inMaintenance = fleet.filter(a => a.status === 'Maintenance').length;
-  const damaged = fleet.filter(a => a.status === 'Damaged').length;
+  const activeLoans = fleet.filter(a => a.available === 'Deployed').length;
+  const inMaintenance = fleet.filter(a => a.available === 'Maintenance').length;
+  const damaged = fleet.filter(a => a.available === 'Damaged').length;
   const utilizationRate = totalEquipment > 0 ? Math.round((activeLoans / totalEquipment) * 100) : 0;
 
   const stats = [

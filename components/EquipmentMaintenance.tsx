@@ -274,7 +274,7 @@ export default function EquipmentMaintenance() {
                     </div>
                     <div>
                       <p className="text-sm font-bold text-slate-800">{selectedAsset.name}</p>
-                      <p className="text-xs text-slate-500">{selectedAsset.brand} - {selectedAsset.type_capacity}</p>
+                      <p className="text-xs text-slate-500">{selectedAsset.brand} - {selectedAsset.capacity}</p>
                     </div>
                   </div>
                 </div>

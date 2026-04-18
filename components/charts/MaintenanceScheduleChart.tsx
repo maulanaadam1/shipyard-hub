@@ -15,7 +15,7 @@ export default function MaintenanceScheduleChart() {
 
   // Group by item type
   const typeCounts = fleet.reduce((acc, item) => {
-    acc[item.item] = (acc[item.item] || 0) + 1;
+    acc[item.type] = (acc[item.type] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
