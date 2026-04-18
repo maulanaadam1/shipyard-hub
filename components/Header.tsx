@@ -120,7 +120,6 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
     } finally {
       setCurrentUser(null);
       setIsUserSwitcherOpen(false);
-      window.location.href = '/';
     }
   };
 
