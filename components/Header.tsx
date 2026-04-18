@@ -118,8 +118,10 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
     } catch (error) {
       console.error('Error during sign out:', error);
     } finally {
+      localStorage.clear(); // Ensure absolute clearance of any cached keys even if network fails
       setCurrentUser(null);
       setIsUserSwitcherOpen(false);
+      window.location.replace('/');
     }
   };
 
