@@ -371,11 +371,18 @@ export function DataProvider({ children }: { children: ReactNode }) {
           if (isAuthLoading) {
             const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
             const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || session.user.email === `${defaultAdminUsername}@shipyard.local`;
+            let fallbackRole = 'Staff';
+            if (isDefaultAdmin) fallbackRole = 'Admin';
+            else if (session.user.user_metadata?.role) {
+               let metaRole = session.user.user_metadata.role.toString().trim();
+               metaRole = metaRole.charAt(0).toUpperCase() + metaRole.slice(1).toLowerCase();
+               if (['Admin','Manager','Staff'].includes(metaRole)) fallbackRole = metaRole;
+            }
             setCurrentUser({
               id: session.user.id,
               name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown',
               email: session.user.email || '',
-              role: isDefaultAdmin ? 'Admin' : 'Staff',
+              role: fallbackRole as 'Admin' | 'Manager' | 'Staff',
               avatar: session.user.user_metadata?.avatar_url
             });
             setIsAuthLoading(false);
@@ -417,11 +424,19 @@ export function DataProvider({ children }: { children: ReactNode }) {
         const setFallbackUser = () => {
           const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
           const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || session.user.email === `${defaultAdminUsername}@shipyard.local`;
+          let fallbackRole = 'Staff';
+          if (isDefaultAdmin) fallbackRole = 'Admin';
+          else if (session.user.user_metadata?.role) {
+             let metaRole = session.user.user_metadata.role.toString().trim();
+             metaRole = metaRole.charAt(0).toUpperCase() + metaRole.slice(1).toLowerCase();
+             if (['Admin','Manager','Staff'].includes(metaRole)) fallbackRole = metaRole;
+          }
+
           setCurrentUser({
             id: session.user.id,
             name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown',
             email: session.user.email || '',
-            role: isDefaultAdmin ? 'Admin' : 'Staff',
+            role: fallbackRole as 'Admin' | 'Manager' | 'Staff',
             avatar: session.user.user_metadata?.avatar_url
           });
           setIsAuthLoading(false);
@@ -431,7 +446,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
         const localAuthTimeout = setTimeout(() => {
           console.warn('Profile fetch in auth state change timed out.');
           setFallbackUser();
-        }, 5000);
+        }, 8000);
 
         const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
         const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || session.user.email === `${defaultAdminUsername}@shipyard.local`;
@@ -488,12 +503,15 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
           if (profile) {
             // Enforce default admin role if it was changed somehow
-            if (isDefaultAdmin && profile.role !== 'Admin') {
+            let dbRole = (profile.role || 'Staff').toString().trim();
+            dbRole = dbRole.charAt(0).toUpperCase() + dbRole.slice(1).toLowerCase();
+            
+            if (isDefaultAdmin && dbRole !== 'Admin') {
               // Don't await this update to avoid blocking the UI
               supabase.from('profiles').update({ role: 'Admin' }).eq('id', session.user.id).then();
               finalRole = 'Admin';
             } else {
-              finalRole = (profile.role as 'Admin' | 'Manager' | 'Staff') || 'Staff';
+              finalRole = ['Admin', 'Manager', 'Staff'].includes(dbRole) ? (dbRole as 'Admin' | 'Manager' | 'Staff') : 'Staff';
             }
             finalName = profile.name || finalName;
             finalAvatar = profile.avatar_url || finalAvatar;
@@ -523,11 +541,19 @@ export function DataProvider({ children }: { children: ReactNode }) {
         } catch (err) {
           console.error('Unexpected error fetching profile:', err);
           // Fallback if fetch fails completely
+          let fallbackRole2 = 'Staff';
+          if (isDefaultAdmin) fallbackRole2 = 'Admin';
+          else if (session.user.user_metadata?.role) {
+             let metaRole = session.user.user_metadata.role.toString().trim();
+             metaRole = metaRole.charAt(0).toUpperCase() + metaRole.slice(1).toLowerCase();
+             if (['Admin','Manager','Staff'].includes(metaRole)) fallbackRole2 = metaRole;
+          }
+
           setCurrentUser({
             id: session.user.id,
             name: isSuperAdmin ? 'Super Admin' : (session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown'),
             email: isSuperAdmin ? '' : (session.user.email || ''),
-            role: isDefaultAdmin ? 'Admin' : 'Staff',
+            role: fallbackRole2 as 'Admin' | 'Manager' | 'Staff',
             avatar: session.user.user_metadata?.avatar_url
           });
         } finally {
