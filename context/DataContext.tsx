@@ -364,32 +364,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
       if (!session || error) {
         clearTimeout(authTimeout);
         setIsAuthLoading(false);
-      } else {
-        // If we have a session, we should not immediately drop to login screen
-        // In case onAuthStateChange is slow, set a fallback after 2s
-        setTimeout(() => {
-          if (isAuthLoading) {
-            const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
-            const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || session.user.email === `${defaultAdminUsername}@shipyard.local`;
-            
-            let fallbackRole = 'Staff';
-            if (isDefaultAdmin) fallbackRole = 'Admin';
-            else if (session.user.user_metadata?.role) {
-               let metaRole = session.user.user_metadata.role.toString().trim();
-               metaRole = metaRole.charAt(0).toUpperCase() + metaRole.slice(1).toLowerCase();
-               if (['Admin','Manager','Staff'].includes(metaRole)) fallbackRole = metaRole;
-            }
-            setCurrentUser({
-              id: session.user.id,
-              name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown',
-              email: session.user.email || '',
-              role: fallbackRole as 'Admin' | 'Manager' | 'Staff',
-              avatar: session.user.user_metadata?.avatar_url
-            });
-            setIsAuthLoading(false);
-            clearTimeout(authTimeout);
-          }
-        }, 2000);
       }
     }).catch((e) => {
       console.error('getSession Error:', e);
@@ -421,6 +395,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
       }
 
       if (session?.user) {
+        // Wait on initial load for Supabase auth headers to properly bind to DB client
+        // This solves the known Supabase JS race-condition where `INITIAL_SESSION` queries
+        // can inexplicably return 0 rows because the auth bearer isn't attached to fetch yet.
+        if (event === 'INITIAL_SESSION') {
+          await new Promise(r => setTimeout(r, 600));
+        }
+
         // Fallback user function
         const setFallbackUser = () => {
           const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
