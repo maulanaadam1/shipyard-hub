@@ -24,7 +24,7 @@ import { useData, Equipment } from '@/context/DataContext';
 import { supabase } from '@/lib/supabase';
 
 export default function EquipmentFleet() {
-  const { fleet: data, setFleet: setData, currentUser } = useData();
+  const { fleet: data, setFleet: setData, currentUser, fetchData } = useData();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -172,6 +172,9 @@ export default function EquipmentFleet() {
         .upsert(uniqueData, { onConflict: 'no_asset' });
       if (error) throw error;
       alert(`Data imported successfully! ${uniqueData.length} unique assets processed.`);
+      if (typeof fetchData === 'function') {
+         fetchData();
+      }
     } catch (error: any) {
       console.error('Error importing data to Supabase:', error.message);
       alert('Error importing data: ' + error.message);
@@ -196,6 +199,9 @@ export default function EquipmentFleet() {
         setSelectedIds(new Set(Array.from(selectedIds).filter(id => !idsToDelete.includes(id))));
         setIsDeleteModalOpen(false);
         setItemToDelete(null);
+        if (typeof fetchData === 'function') {
+           fetchData();
+        }
       }
     }
   };
@@ -247,6 +253,11 @@ export default function EquipmentFleet() {
         throw error;
       } else {
         setIsModalOpen(false);
+        setSelectedItem(null);
+        // Force an immediate refetch manually so the UI updates regardless of websocket health/RLS replication settings
+        if (typeof fetchData === 'function') {
+           fetchData();
+        }
       }
     } catch (err: any) {
       console.error('Error saving to Supabase:', err.message);

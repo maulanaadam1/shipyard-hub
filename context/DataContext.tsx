@@ -195,6 +195,7 @@ interface DataContextType {
   currentUser: User | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
   isAuthLoading: boolean;
+  fetchData: (isInitial?: boolean) => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
@@ -598,7 +599,8 @@ export function DataProvider({ children }: { children: ReactNode }) {
       ships, setShips,
       projects, setProjects,
       currentUser, setCurrentUser,
-      isAuthLoading
+      isAuthLoading,
+      fetchData
     }}>
       {children}
     </DataContext.Provider>
