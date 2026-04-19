@@ -557,10 +557,10 @@ export default function EquipmentFleet() {
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden"
+              className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             >
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                <h3 className="font-display font-bold text-xl text-slate-800">
+              <div className="p-4 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
+                <h3 className="font-display font-bold text-lg sm:text-xl text-slate-800">
                   {isDetailMode ? 'Equipment Details' : selectedItem ? 'Edit Equipment' : 'Add New Equipment'}
                 </h3>
                 <button 
@@ -571,8 +571,8 @@ export default function EquipmentFleet() {
                 </button>
               </div>
 
-              <form onSubmit={handleSave} className="p-8 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <form onSubmit={handleSave} className="p-4 sm:p-8 space-y-6 overflow-y-auto custom-scrollbar flex-1">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Asset Number</label>
                     <input 
@@ -657,18 +657,18 @@ export default function EquipmentFleet() {
                   </div>
                 </div>
 
-                <div className="pt-6 border-t border-slate-100 flex justify-end gap-3">
+                <div className="pt-6 mt-4 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-3 shrink-0">
                   <button 
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="px-6 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+                    className="w-full sm:w-auto px-6 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors order-2 sm:order-1"
                   >
                     {isDetailMode ? 'Close' : 'Cancel'}
                   </button>
                   {!isDetailMode && (
                     <button 
                       type="submit"
-                      className="px-8 py-2.5 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-lg shadow-[#FDB913]/20"
+                      className="w-full sm:w-auto px-8 py-2.5 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-lg shadow-[#FDB913]/20 order-1 sm:order-2"
                     >
                       {selectedItem ? 'Update Asset' : 'Save Asset'}
                     </button>
