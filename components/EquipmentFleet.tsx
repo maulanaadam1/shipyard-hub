@@ -216,37 +216,41 @@ export default function EquipmentFleet() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const equipmentData = {
-      no_asset: formData.get('no_asset') as string,
-      type: formData.get('type') as string,
-      source: formData.get('source') as string,
-      brand: formData.get('brand') as string,
-      name: formData.get('name') as string,
-      capacity: formData.get('capacity') as string,
-      year_invest: formData.get('year_invest') as string,
-      alias: formData.get('alias') as string,
-      price: formData.get('price') as string,
+      no_asset: (formData.get('no_asset') as string) || 'N/A',
+      type: (formData.get('type') as string) || 'N/A',
+      source: (formData.get('source') as string) || 'N/A',
+      brand: (formData.get('brand') as string) || 'N/A',
+      name: (formData.get('name') as string) || 'N/A',
+      capacity: (formData.get('capacity') as string) || 'N/A',
+      year_invest: (formData.get('year_invest') as string) || 'N/A',
+      alias: (formData.get('alias') as string) || 'N/A',
+      price: (formData.get('price') as string) || '0',
       available: formData.get('available') as string || selectedItem?.available || 'Available'
     };
 
-    let error;
-    if (selectedItem) {
-      const { error: updateError } = await supabase
-        .from('equipment')
-        .update(equipmentData)
-        .eq('id', selectedItem.id);
-      error = updateError;
-    } else {
-      const { error: insertError } = await supabase
-        .from('equipment')
-        .insert([equipmentData]);
-      error = insertError;
-    }
+    try {
+      let error;
+      if (selectedItem) {
+        const { error: updateError } = await supabase
+          .from('equipment')
+          .update(equipmentData)
+          .eq('id', selectedItem.id);
+        error = updateError;
+      } else {
+        const { error: insertError } = await supabase
+          .from('equipment')
+          .insert([equipmentData]);
+        error = insertError;
+      }
 
-    if (error) {
-      console.error('Error saving to Supabase:', error.message);
-      alert('Error saving: ' + error.message);
-    } else {
-      setIsModalOpen(false);
+      if (error) {
+        throw error;
+      } else {
+        setIsModalOpen(false);
+      }
+    } catch (err: any) {
+      console.error('Error saving to Supabase:', err.message);
+      alert('Error saving data! Check connection and try again: ' + err.message);
     }
   };
 
@@ -585,7 +589,6 @@ export default function EquipmentFleet() {
                       name="name"
                       defaultValue={selectedItem?.name}
                       disabled={isDetailMode}
-                      required
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
@@ -595,7 +598,6 @@ export default function EquipmentFleet() {
                       name="brand"
                       defaultValue={selectedItem?.brand}
                       disabled={isDetailMode}
-                      required
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
@@ -605,7 +607,6 @@ export default function EquipmentFleet() {
                       name="type"
                       defaultValue={selectedItem?.type}
                       disabled={isDetailMode}
-                      required
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
@@ -615,7 +616,6 @@ export default function EquipmentFleet() {
                       name="capacity"
                       defaultValue={selectedItem?.capacity}
                       disabled={isDetailMode}
-                      required
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
@@ -625,7 +625,6 @@ export default function EquipmentFleet() {
                       name="source"
                       defaultValue={selectedItem?.source}
                       disabled={isDetailMode}
-                      required
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
@@ -635,7 +634,6 @@ export default function EquipmentFleet() {
                       name="year_invest"
                       defaultValue={selectedItem?.year_invest}
                       disabled={isDetailMode}
-                      required
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
