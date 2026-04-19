@@ -34,6 +34,7 @@ export default function EquipmentFleet() {
   const [selectedItem, setSelectedItem] = useState<Equipment | null>(null);
   const [isDetailMode, setIsDetailMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [isSaving, setIsSaving] = useState(false);
   
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -220,6 +221,9 @@ export default function EquipmentFleet() {
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (isSaving) return;
+    setIsSaving(true);
+    
     const formData = new FormData(e.currentTarget);
     const equipmentData = {
       no_asset: (formData.get('no_asset') as string) || 'N/A',
@@ -262,6 +266,8 @@ export default function EquipmentFleet() {
     } catch (err: any) {
       console.error('Error saving to Supabase:', err.message);
       alert('Error saving data! Check connection and try again: ' + err.message);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -679,9 +685,10 @@ export default function EquipmentFleet() {
                   {!isDetailMode && (
                     <button 
                       type="submit"
-                      className="w-full sm:w-auto px-8 py-2.5 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-lg shadow-[#FDB913]/20 order-1 sm:order-2"
+                      disabled={isSaving}
+                      className="w-full sm:w-auto px-8 py-2.5 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-lg shadow-[#FDB913]/20 order-1 sm:order-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {selectedItem ? 'Update Asset' : 'Save Asset'}
+                      {isSaving ? 'Saving...' : selectedItem ? 'Update Asset' : 'Save Asset'}
                     </button>
                   )}
                 </div>
