@@ -36,15 +36,15 @@ export default function UtilityDashboard() {
 
   // Calculate overall utilization
   const totalEquipment = fleet.length;
-  const deployedCount = fleet.filter(a => a.available === 'Deployed').length;
+  const deployedCount = fleet.filter(a => a.status === 'Deployed').length;
   const utilizationRate = totalEquipment > 0 ? Math.round((deployedCount / totalEquipment) * 100) : 0;
 
   // Category-wise utilization
   const categoryData = useMemo(() => {
-    const categories = Array.from(new Set(fleet.map(item => item.type)));
+    const categories = Array.from(new Set(fleet.map(item => item.item)));
     return categories.map(cat => {
-      const items = fleet.filter(i => i.type === cat);
-      const deployed = items.filter(i => i.available === 'Deployed').length;
+      const items = fleet.filter(i => i.item === cat);
+      const deployed = items.filter(i => i.status === 'Deployed').length;
       return {
         name: cat,
         utilization: items.length > 0 ? Math.round((deployed / items.length) * 100) : 0,
@@ -244,7 +244,7 @@ export default function UtilityDashboard() {
                     </div>
                   </td>
                   <td className="px-8 py-4">
-                    <span className="text-xs font-medium text-slate-600">{asset.type}</span>
+                    <span className="text-xs font-medium text-slate-600">{asset.item}</span>
                   </td>
                   <td className="px-8 py-4 text-center">
                     <span className="text-xs font-bold text-slate-700">12</span>
@@ -259,11 +259,11 @@ export default function UtilityDashboard() {
                   </td>
                   <td className="px-8 py-4 text-right">
                     <span className={`text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider ${
-                      asset.available === 'Available' ? 'bg-[#FDB913]/10 text-[#FDB913]' :
-                      asset.available === 'Deployed' ? 'bg-sky-50 text-sky-600' :
+                      asset.status === 'Available' ? 'bg-[#FDB913]/10 text-[#FDB913]' :
+                      asset.status === 'Deployed' ? 'bg-sky-50 text-sky-600' :
                       'bg-amber-50 text-amber-600'
                     }`}>
-                      {asset.available}
+                      {asset.status}
                     </span>
                   </td>
                 </tr>

@@ -6,15 +6,13 @@ import { useData } from '@/context/DataContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { supabase } from '@/lib/supabase';
 import Image from 'next/image';
-import ProfileModal from './ProfileModal';
 
 export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   const { currentUser, setCurrentUser } = useData();
   const [isUserSwitcherOpen, setIsUserSwitcherOpen] = React.useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = React.useState(false);
-  const [isProfileModalOpen, setIsProfileModalOpen] = React.useState(false);
   const [authMode, setAuthMode] = React.useState<'login' | 'signup'>('login');
-  const [identifier, setIdentifier] = React.useState('');
+  const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [authError, setAuthError] = React.useState('');
   const [successMessage, setSuccessMessage] = React.useState('');
@@ -45,54 +43,20 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
     }, 30000);
 
     try {
-      const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
-      const defaultAdminPassword = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_PASSWORD || 'admin123';
-      const isDefaultAdminLogin = identifier === defaultAdminUsername && password === defaultAdminPassword;
-
-      // If it's a username (no @), append dummy domain
-      const isEmail = identifier.includes('@');
-      const authEmail = isEmail ? identifier : `${identifier}@shipyard.local`;
-
       if (authMode === 'login') {
-        const { error } = await supabase.auth.signInWithPassword({ email: authEmail, password });
-        
-        if (error) {
-          // Auto-create default admin if it doesn't exist
-          if (isDefaultAdminLogin && error.message.includes('Invalid login credentials')) {
-            const { data: authData, error: signUpError } = await supabase.auth.signUp({ email: authEmail, password });
-            if (signUpError) throw signUpError;
-            
-            if (authData.user) {
-              await supabase.from('profiles').upsert({ 
-                id: authData.user.id, 
-                name: 'Super Admin', 
-                email: '', 
-                role: 'Admin' 
-              }, { onConflict: 'id' });
-              
-              // Sign in after creation
-              const { error: retryError } = await supabase.auth.signInWithPassword({ email: authEmail, password });
-              if (retryError) throw retryError;
-            }
-          } else {
-            throw error;
-          }
-        }
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
         setIsLoginModalOpen(false);
       } else {
-        const { data: authData, error: signUpError } = await supabase.auth.signUp({ email: authEmail, password });
+        const { data: authData, error: signUpError } = await supabase.auth.signUp({ email, password });
         if (signUpError) throw signUpError;
         
         if (authData.user) {
-          const isDefaultAdmin = authEmail === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || identifier === defaultAdminUsername;
-          const displayName = !isEmail && identifier === defaultAdminUsername ? 'Super Admin' : (isEmail ? authEmail.split('@')[0] : identifier);
-          const displayEmail = isEmail ? authEmail : '';
-
           await supabase.from('profiles').upsert({ 
             id: authData.user.id, 
-            name: displayName, 
-            email: displayEmail, 
-            role: isDefaultAdmin ? 'Admin' : 'Staff' 
+            name: email.split('@')[0], 
+            email: email, 
+            role: 'Staff' 
           }, { onConflict: 'id' });
         }
         
@@ -101,7 +65,7 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
         setPassword('');
         return;
       }
-      setIdentifier('');
+      setEmail('');
       setPassword('');
     } catch (error: any) {
       setAuthError(error.message);
@@ -113,24 +77,9 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   };
 
   const handleSupabaseLogout = async () => {
-    // Force instant UI clearance so the user feels the logout immediately
-    localStorage.clear();
+    await supabase.auth.signOut();
     setCurrentUser(null);
     setIsUserSwitcherOpen(false);
-
-    try {
-      // Race supabase signout against a 1.5-second timeout to prevent deadlocks
-      // if internet connection is lagging or the websocket is unresponsive.
-      await Promise.race([
-        supabase.auth.signOut(),
-        new Promise(resolve => setTimeout(resolve, 1500))
-      ]);
-    } catch (error) {
-      console.error('Error during sign out:', error);
-    } finally {
-      // Always redirect back to root to clean any leftover state.
-      window.location.replace('/');
-    }
   };
 
   return (
@@ -210,15 +159,6 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                   
                   <div className="p-2 space-y-1">
                     <button 
-                      onClick={() => {
-                        setIsProfileModalOpen(true);
-                        setIsUserSwitcherOpen(false);
-                      }}
-                      className="w-full flex items-center gap-2 p-2 text-slate-700 hover:bg-slate-100 rounded-lg transition-colors text-xs font-bold"
-                    >
-                      <UserCircle className="w-4 h-4" /> My Profile
-                    </button>
-                    <button 
                       onClick={handleSupabaseLogout}
                       className="w-full flex items-center gap-2 p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors text-xs font-bold"
                     >
@@ -270,14 +210,14 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
                   </div>
                 )}
                 <div className="space-y-1">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Email or Username</label>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Email Address</label>
                   <input 
-                    type="text"
+                    type="email"
                     required
-                    value={identifier}
-                    onChange={(e) => setIdentifier(e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
-                    placeholder="name@company.com or username"
+                    placeholder="name@company.com"
                   />
                 </div>
                 <div className="space-y-1">
@@ -314,11 +254,6 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
           </div>
         )}
       </AnimatePresence>
-      {/* Profile Modal */}
-      <ProfileModal 
-        isOpen={isProfileModalOpen} 
-        onClose={() => setIsProfileModalOpen(false)} 
-      />
     </header>
   );
 }

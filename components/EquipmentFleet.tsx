@@ -24,7 +24,7 @@ import { useData, Equipment } from '@/context/DataContext';
 import { supabase } from '@/lib/supabase';
 
 export default function EquipmentFleet() {
-  const { fleet: data, setFleet: setData, currentUser, fetchData } = useData();
+  const { fleet: data, setFleet: setData, currentUser } = useData();
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -34,7 +34,6 @@ export default function EquipmentFleet() {
   const [selectedItem, setSelectedItem] = useState<Equipment | null>(null);
   const [isDetailMode, setIsDetailMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [isSaving, setIsSaving] = useState(false);
   
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -124,14 +123,13 @@ export default function EquipmentFleet() {
       return {
         no_asset: parts[0] || '',
         name: parts[1] || '',
-        type: parts[2] || '', // Was item
+        item: parts[2] || '',
         brand: parts[3] || '',
-        capacity: parts[4] || '', // Was type_capacity
-        source: parts[5] || '', // Was location, reusing as source maybe? The user prompt said: source no_asset type brand name capacity year_invest available alias price
-        year_invest: parts[6] || '',
+        type_capacity: parts[4] || '',
+        location: parts[5] || '',
+        year: parts[6] || '',
         alias: parts[7] || '',
-        price: parts[8] || '', // was category
-        available: parts[9] || 'Available'
+        category: parts[8] || ''
       };
     });
 
@@ -148,15 +146,17 @@ export default function EquipmentFleet() {
 
     const formattedData = importedData.map((item, idx) => ({
       no_asset: item.no_asset || 'N/A',
-      type: item.type || 'N/A',
-      source: item.source || 'N/A',
+      category: item.category || 'EQUIPMENT',
+      location: item.location || 'N/A',
+      item: item.item || 'N/A',
       brand: item.brand || 'N/A',
+      no: item.no || (data.length + idx + 1).toString(),
       name: item.name || 'N/A',
-      capacity: item.capacity || 'N/A',
-      year_invest: item.year_invest || 'N/A',
+      type_capacity: item.type_capacity || 'N/A',
+      year: item.year || 'N/A',
       alias: item.alias || 'N/A',
-      price: item.price || '0',
-      available: item.available || 'Available'
+      product_identifier: item.product_identifier || `${item.alias} ${item.type_capacity}`,
+      status: 'Available'
     }));
 
     // Deduplicate by no_asset to prevent "cannot affect row a second time" error
@@ -173,9 +173,6 @@ export default function EquipmentFleet() {
         .upsert(uniqueData, { onConflict: 'no_asset' });
       if (error) throw error;
       alert(`Data imported successfully! ${uniqueData.length} unique assets processed.`);
-      if (typeof fetchData === 'function') {
-         fetchData();
-      }
     } catch (error: any) {
       console.error('Error importing data to Supabase:', error.message);
       alert('Error importing data: ' + error.message);
@@ -200,9 +197,6 @@ export default function EquipmentFleet() {
         setSelectedIds(new Set(Array.from(selectedIds).filter(id => !idsToDelete.includes(id))));
         setIsDeleteModalOpen(false);
         setItemToDelete(null);
-        if (typeof fetchData === 'function') {
-           fetchData();
-        }
       }
     }
   };
@@ -221,66 +215,41 @@ export default function EquipmentFleet() {
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isSaving) return;
-    setIsSaving(true);
-    
     const formData = new FormData(e.currentTarget);
     const equipmentData = {
-      no_asset: (formData.get('no_asset') as string) || 'N/A',
-      type: (formData.get('type') as string) || 'N/A',
-      source: (formData.get('source') as string) || 'N/A',
-      brand: (formData.get('brand') as string) || 'N/A',
-      name: (formData.get('name') as string) || 'N/A',
-      capacity: (formData.get('capacity') as string) || 'N/A',
-      year_invest: (formData.get('year_invest') as string) || 'N/A',
-      alias: (formData.get('alias') as string) || 'N/A',
-      price: (formData.get('price') as string) || '0',
-      available: formData.get('available') as string || selectedItem?.available || 'Available'
+      no_asset: formData.get('no_asset') as string,
+      category: formData.get('category') as string,
+      location: formData.get('location') as string,
+      item: formData.get('item') as string,
+      brand: formData.get('brand') as string,
+      no: formData.get('no') as string,
+      name: formData.get('name') as string,
+      type_capacity: formData.get('type_capacity') as string,
+      year: formData.get('year') as string,
+      alias: formData.get('alias') as string,
+      product_identifier: `${formData.get('alias')} ${formData.get('type_capacity')}`,
+      status: selectedItem?.status || 'Available'
     };
 
-    try {
-      let error;
-      let insertedOrUpdatedData;
+    let error;
+    if (selectedItem) {
+      const { error: updateError } = await supabase
+        .from('equipment')
+        .update(equipmentData)
+        .eq('id', selectedItem.id);
+      error = updateError;
+    } else {
+      const { error: insertError } = await supabase
+        .from('equipment')
+        .insert([equipmentData]);
+      error = insertError;
+    }
 
-      if (selectedItem) {
-        const { error: updateError, data: updateData } = await supabase
-          .from('equipment')
-          .update(equipmentData)
-          .eq('id', selectedItem.id)
-          .select();
-        error = updateError;
-        insertedOrUpdatedData = updateData;
-      } else {
-        const { error: insertError, data: insertData } = await supabase
-          .from('equipment')
-          .insert([equipmentData])
-          .select();
-        error = insertError;
-        insertedOrUpdatedData = insertData;
-      }
-
-      console.log("[Supabase Auth] Current User ID:", (await supabase.auth.getSession()).data.session?.user?.id);
-      console.log("[Supabase Write Result] Error:", error, "Data:", insertedOrUpdatedData);
-
-      if (error) {
-        throw error;
-      } else if (!insertedOrUpdatedData || insertedOrUpdatedData.length === 0) {
-        console.warn("Write succeeded but returned 0 rows! This strongly indicates an RLS policy is STILL silently blocking the SELECT return of your own insert, or the row was rejected.");
-        alert("Warning: Data saved to server, but the server refused to return it to your screen. Are you sure you are querying the correct Supabase Project URL, and RLS is truly disabled?");
-      }
-      
+    if (error) {
+      console.error('Error saving to Supabase:', error.message);
+      alert('Error saving: ' + error.message);
+    } else {
       setIsModalOpen(false);
-      setSelectedItem(null);
-      
-      // Force an immediate refetch manually so the UI updates
-      if (typeof fetchData === 'function') {
-         fetchData();
-      }
-    } catch (err: any) {
-      console.error('Error saving to Supabase:', err.message);
-      alert('Error saving data! Check connection and try again: ' + err.message);
-    } finally {
-      setIsSaving(false);
     }
   };
 
@@ -357,33 +326,18 @@ export default function EquipmentFleet() {
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="p-4 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-slate-50/50">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-1">
-            <div className="relative flex-1 max-w-md w-full flex items-center gap-2">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input 
-                  type="text" 
-                  placeholder="Search across all columns..." 
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
-                />
-              </div>
-              <button 
-                onClick={async () => {
-                  try {
-                    const { data, error } = await supabase.from('equipment').select('*');
-                    console.log("Direct db diagnostic:", data, error);
-                    alert(`Database Sync Diagnostic:\nData Found: ${data?.length} rows\nError Status: ${error?.message || 'None'}`);
-                  } catch(e: any) { alert(e.message) }
+            <div className="relative flex-1 max-w-md w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input 
+                type="text" 
+                placeholder="Search across all columns..." 
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
                 }}
-                className="hidden md:flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-xl text-xs font-medium text-blue-600 hover:bg-blue-100 transition-colors"
-                title="Run Database Health Check"
-              >
-                Diagnostic
-              </button>
+                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
+              />
             </div>
             
             {selectedIds.size > 0 && (
@@ -456,12 +410,11 @@ export default function EquipmentFleet() {
                 </th>
                 <th className="px-6 py-4 border-b border-slate-100 w-12 text-center">No</th>
                 <th className="px-6 py-4 border-b border-slate-100">Asset No</th>
-                <th className="px-6 py-4 border-b border-slate-100">Type / Name</th>
+                <th className="px-6 py-4 border-b border-slate-100">Item / Name</th>
                 <th className="px-6 py-4 border-b border-slate-100">Brand</th>
                 <th className="px-6 py-4 border-b border-slate-100">Capacity</th>
-                <th className="px-6 py-4 border-b border-slate-100">Source</th>
+                <th className="px-6 py-4 border-b border-slate-100">Location</th>
                 <th className="px-6 py-4 border-b border-slate-100">Year</th>
-                <th className="px-6 py-4 border-b border-slate-100">Price</th>
                 <th className="px-6 py-4 border-b border-slate-100 text-right">Actions</th>
               </tr>
             </thead>
@@ -484,7 +437,7 @@ export default function EquipmentFleet() {
                   </td>
                   <td className="px-6 py-4 text-center">
                     <span className="text-xs font-bold text-slate-400">
-                      {itemsPerPage === 'all' ? idx + 1 : (currentPage - 1) * (itemsPerPage as number) + idx + 1}
+                      {itemsPerPage === 'all' ? idx + 1 : (currentPage - 1) * itemsPerPage + idx + 1}
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -495,7 +448,7 @@ export default function EquipmentFleet() {
                   <td className="px-6 py-4">
                     <div>
                       <p className="text-sm font-bold text-slate-800">{item.name}</p>
-                      <p className="text-[11px] text-slate-500 mt-0.5">{item.type} • {item.alias}</p>
+                      <p className="text-[11px] text-slate-500 mt-0.5">{item.item} • {item.alias}</p>
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -503,17 +456,14 @@ export default function EquipmentFleet() {
                   </td>
                   <td className="px-6 py-4">
                     <span className="text-xs text-slate-500 bg-slate-100 px-2 py-1 rounded-md">
-                      {item.capacity}
+                      {item.type_capacity}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-sm text-slate-600">{item.source}</span>
+                    <span className="text-sm text-slate-600">{item.location}</span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-sm text-slate-600">{item.year_invest}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-slate-600 font-medium">{item.price}</span>
+                    <span className="text-sm text-slate-600">{item.year}</span>
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -602,10 +552,10 @@ export default function EquipmentFleet() {
               initial={{ scale: 0.95, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
-              className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+              className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden"
             >
-              <div className="p-4 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
-                <h3 className="font-display font-bold text-lg sm:text-xl text-slate-800">
+              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <h3 className="font-display font-bold text-xl text-slate-800">
                   {isDetailMode ? 'Equipment Details' : selectedItem ? 'Edit Equipment' : 'Add New Equipment'}
                 </h3>
                 <button 
@@ -616,8 +566,8 @@ export default function EquipmentFleet() {
                 </button>
               </div>
 
-              <form onSubmit={handleSave} className="p-4 sm:p-8 space-y-6 overflow-y-auto custom-scrollbar flex-1">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+              <form onSubmit={handleSave} className="p-8 space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Asset Number</label>
                     <input 
@@ -634,6 +584,7 @@ export default function EquipmentFleet() {
                       name="name"
                       defaultValue={selectedItem?.name}
                       disabled={isDetailMode}
+                      required
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
@@ -643,50 +594,45 @@ export default function EquipmentFleet() {
                       name="brand"
                       defaultValue={selectedItem?.brand}
                       disabled={isDetailMode}
+                      required
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Type</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Type / Capacity</label>
                     <input 
-                      name="type"
-                      defaultValue={selectedItem?.type}
+                      name="type_capacity"
+                      defaultValue={selectedItem?.type_capacity}
                       disabled={isDetailMode}
+                      required
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Capacity</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Location</label>
                     <input 
-                      name="capacity"
-                      defaultValue={selectedItem?.capacity}
+                      name="location"
+                      defaultValue={selectedItem?.location}
                       disabled={isDetailMode}
+                      required
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Source</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Year</label>
                     <input 
-                      name="source"
-                      defaultValue={selectedItem?.source}
+                      name="year"
+                      defaultValue={selectedItem?.year}
                       disabled={isDetailMode}
+                      required
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Year of Investment</label>
+                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Category</label>
                     <input 
-                      name="year_invest"
-                      defaultValue={selectedItem?.year_invest}
-                      disabled={isDetailMode}
-                      className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Price</label>
-                    <input 
-                      name="price"
-                      defaultValue={selectedItem?.price || '0'}
+                      name="category"
+                      defaultValue={selectedItem?.category || 'EQUIPMENT'}
                       disabled={isDetailMode}
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-70"
                     />
@@ -702,21 +648,20 @@ export default function EquipmentFleet() {
                   </div>
                 </div>
 
-                <div className="pt-6 mt-4 border-t border-slate-100 flex flex-col sm:flex-row justify-end gap-3 shrink-0">
+                <div className="pt-6 border-t border-slate-100 flex justify-end gap-3">
                   <button 
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="w-full sm:w-auto px-6 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors order-2 sm:order-1"
+                    className="px-6 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
                   >
                     {isDetailMode ? 'Close' : 'Cancel'}
                   </button>
                   {!isDetailMode && (
                     <button 
                       type="submit"
-                      disabled={isSaving}
-                      className="w-full sm:w-auto px-8 py-2.5 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-lg shadow-[#FDB913]/20 order-1 sm:order-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-8 py-2.5 bg-[#FDB913] text-slate-900 rounded-xl text-sm font-bold hover:bg-[#e5a611] transition-colors shadow-lg shadow-[#FDB913]/20"
                     >
-                      {isSaving ? 'Saving...' : selectedItem ? 'Update Asset' : 'Save Asset'}
+                      {selectedItem ? 'Update Asset' : 'Save Asset'}
                     </button>
                   )}
                 </div>
@@ -808,14 +753,14 @@ export default function EquipmentFleet() {
                   <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                   <div className="text-xs text-amber-800 leading-relaxed">
                     <p className="font-bold mb-1">Format Instructions:</p>
-                    <p>Paste data separated by commas, semicolons, or tabs. Order: <span className="font-mono bg-amber-100 px-1 rounded">no_asset, name, type, brand, capacity, source, year_invest, alias, price</span>. Headers will be ignored automatically.</p>
+                    <p>Paste data separated by commas, semicolons, or tabs. Order: <span className="font-mono bg-amber-100 px-1 rounded">no_asset, name, item, brand, capacity, location, year, alias, category</span>. Headers will be ignored automatically.</p>
                   </div>
                 </div>
 
                 <textarea 
                   value={importText}
                   onChange={(e) => setImportText(e.target.value)}
-                  placeholder="Example:&#10;2.10.01/02.001/YWTS, Mesinlas SMAW 400A, SMAW, WEICO, 400A, WAREHOUSE, 2011, WEICO 1, 1500000"
+                  placeholder="Example:&#10;2.10.01/02.001/YWTS, Mesinlas SMAW 400A, SMAW, WEICO, 400A, WAREHOUSE, 2011, WEICO 1, EQUIPMENT"
                   className="w-full h-64 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-mono outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all resize-none"
                 />
 

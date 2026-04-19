@@ -14,10 +14,10 @@ export default function FleetStatusChart() {
   }, []);
 
   const stats = {
-    Available: fleet.filter(a => a.available === 'Available').length,
-    Deployed: fleet.filter(a => a.available === 'Deployed').length,
-    Maintenance: fleet.filter(a => a.available === 'Maintenance').length,
-    Damaged: fleet.filter(a => a.available === 'Damaged').length,
+    Available: fleet.filter(a => a.status === 'Available').length,
+    Deployed: fleet.filter(a => a.status === 'Deployed').length,
+    Maintenance: fleet.filter(a => a.status === 'Maintenance').length,
+    Damaged: fleet.filter(a => a.status === 'Damaged').length,
   };
 
   const data = [

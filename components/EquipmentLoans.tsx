@@ -47,8 +47,6 @@ export default function EquipmentLoans() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLoan, setSelectedLoan] = useState<LoanRequest | null>(null);
   const [requestedItems, setRequestedItems] = useState<RequestedItem[]>([]);
-  const [modalProjectId, setModalProjectId] = useState('');
-  const [modalShipName, setModalShipName] = useState('');
   
   // Paging & Bulk States
   const [currentPage, setCurrentPage] = useState(1);
@@ -138,17 +136,13 @@ export default function EquipmentLoans() {
 
   const openAddModal = () => {
     setSelectedLoan(null);
-    setRequestedItems([{ type: equipmentTypes[0], quantity: 1}]);
-    setModalProjectId('');
-    setModalShipName('');
+    setRequestedItems([]);
     setIsModalOpen(true);
   };
 
   const openEditModal = (loan: LoanRequest) => {
     setSelectedLoan(loan);
-    setRequestedItems(loan.items || []);
-    setModalProjectId(loan.project_id || '');
-    setModalShipName(loan.shipname || '');
+    setRequestedItems(loan.items);
     setIsModalOpen(true);
   };
 
@@ -524,34 +518,11 @@ export default function EquipmentLoans() {
                 {/* Check if editable: New request OR Draft status */}
                 {(() => {
                   const isEditable = !selectedLoan || selectedLoan.status === 'Draft';
-                  
-                  // Extract years for all projects to find the latest available year dynamically
-                  const projectYears = projects.map(p => {
-                    if (p.year && Number(p.year) > 2000) return Number(p.year);
-                    if (p.create_date) return new Date(p.create_date).getFullYear();
-                    if (p.idproject && p.idproject.length >= 5) {
-                      const match = p.idproject.match(/\d{2}/);
-                      if (match) return 2000 + parseInt(match[0]);
-                    }
-                    return 0;
-                  }).filter(y => !isNaN(y) && y > 2000);
-                  
-                  const maxYear = projectYears.length > 0 ? Math.max(...projectYears) : new Date().getFullYear();
-                  
-                  // Filter projects from the max year and the previous year (Last 2 Years)
-                  const activeProjects = projects.filter((p, index) => {
-                    let pYear = 0;
-                    if (p.year && Number(p.year) > 2000) {
-                      pYear = Number(p.year);
-                    } else if (p.create_date) {
-                      pYear = new Date(p.create_date).getFullYear();
-                    } else if (p.idproject && p.idproject.length >= 5) {
-                      const match = p.idproject.match(/\d{2}/);
-                      if (match) pYear = 2000 + parseInt(match[0]);
-                    }
-                    
-                    // Show from Max Year and Previous Year or generic fallback
-                    return pYear >= maxYear - 1 || (!pYear && index < 50); // Fallback to include unparseable projects if we have to
+                  const currentYear = new Date().getFullYear();
+                  // Filter projects from the current year and the previous year
+                  const activeProjects = projects.filter(p => {
+                    const projectYear = p.year || (p.create_date ? new Date(p.create_date).getFullYear() : 0);
+                    return projectYear >= currentYear - 1;
                   });
 
                   return (
@@ -561,17 +532,19 @@ export default function EquipmentLoans() {
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Project ID</label>
                     <select 
                       name="project_id"
-                      value={modalProjectId}
+                      defaultValue={selectedLoan?.project_id}
                       required
                       disabled={!isEditable}
                       onChange={(e) => {
                         const selectedId = e.target.value;
-                        setModalProjectId(selectedId);
                         const project = projects.find(p => p.idproject === selectedId);
                         if (project && project.shipname) {
-                          setModalShipName(project.shipname);
-                        } else {
-                          setModalShipName('');
+                          // Find the shipname select element in the same form
+                          const form = (e.target as HTMLSelectElement).form;
+                          const shipSelect = form?.elements.namedItem('shipname') as HTMLSelectElement;
+                          if (shipSelect) {
+                            shipSelect.value = project.shipname;
+                          }
                         }
                       }}
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-60"
@@ -586,21 +559,18 @@ export default function EquipmentLoans() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Ship Name</label>
-                    <input 
+                    <select 
                       name="shipname"
-                      value={modalShipName}
-                      onChange={(e) => setModalShipName(e.target.value)}
-                      list="ships-list"
+                      defaultValue={selectedLoan?.shipname}
                       required
                       disabled={!isEditable}
-                      placeholder="Type or select ship name"
                       className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] disabled:opacity-60"
-                    />
-                    <datalist id="ships-list">
+                    >
+                      <option value="">Select Ship</option>
                       {ships.map(ship => (
                         <option key={ship.id} value={ship.shipname}>{ship.shipname}</option>
                       ))}
-                    </datalist>
+                    </select>
                   </div>
                   <div className="space-y-2">
                     <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">Work Order</label>

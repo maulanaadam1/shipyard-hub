@@ -49,14 +49,14 @@ export default function EquipmentUtilizationChart() {
   const { fleet } = useData();
 
   const chartData = useMemo(() => {
-    const categories = Array.from(new Set(fleet.map(item => item.type)));
+    const categories = Array.from(new Set(fleet.map(item => item.item)));
     
     return categories.map(category => {
-      const itemsInCategory = fleet.filter(item => item.type === category);
+      const itemsInCategory = fleet.filter(item => item.item === category);
       const total = itemsInCategory.length;
-      const deployed = itemsInCategory.filter(item => item.available === 'Deployed').length;
-      const maintenance = itemsInCategory.filter(item => item.available === 'Maintenance').length;
-      const available = itemsInCategory.filter(item => item.available === 'Available').length;
+      const deployed = itemsInCategory.filter(item => item.status === 'Deployed').length;
+      const maintenance = itemsInCategory.filter(item => item.status === 'Maintenance').length;
+      const available = itemsInCategory.filter(item => item.status === 'Available').length;
       
       const utilizationRate = total > 0 ? Math.round((deployed / total) * 100) : 0;
 

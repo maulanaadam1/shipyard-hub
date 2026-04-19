@@ -7,18 +7,19 @@ import { supabase } from '@/lib/supabase';
 
 export interface Equipment {
   id: string;
-  created_at?: string;
-  updated_at?: string;
-  source: string;
+  created_date: string;
   no_asset: string;
-  type: string;
+  category: string;
+  location: string;
+  item: string;
   brand: string;
+  no: string;
   name: string;
-  capacity: string;
-  year_invest: string;
-  available: string; // Used to be status
+  type_capacity: string;
+  year: string;
   alias: string;
-  price: string;
+  product_identifier: string;
+  status: 'Available' | 'Deployed' | 'Maintenance' | 'Damaged';
 }
 
 export interface RequestedItem {
@@ -194,11 +195,156 @@ interface DataContextType {
   setProjects: React.Dispatch<React.SetStateAction<Project[]>>;
   currentUser: User | null;
   setCurrentUser: React.Dispatch<React.SetStateAction<User | null>>;
-  isAuthLoading: boolean;
-  fetchData: (isInitial?: boolean) => Promise<void>;
 }
 
 const DataContext = createContext<DataContextType | undefined>(undefined);
+
+// --- Initial Data ---
+
+const initialFleet: Equipment[] = [
+  {
+    id: '60a1e9c4',
+    created_date: '3/8/2025 13:24:09',
+    no_asset: 'CNR 1',
+    category: 'EQUIPMENT',
+    location: 'WAREHOUSE FACILITY',
+    item: 'SMAW',
+    brand: 'WEICO',
+    no: '1',
+    name: 'Mesinlas SMAW 400A',
+    type_capacity: '20A/20.8V-400 A/36V',
+    year: '2011',
+    alias: 'WEICO 1',
+    product_identifier: 'WEICO 1 20A/20.8V-400 A/36V',
+    status: 'Available'
+  },
+  {
+    id: '0d85973b',
+    created_date: '3/8/2025 13:24:09',
+    no_asset: 'CNR 4',
+    category: 'EQUIPMENT',
+    location: 'WAREHOUSE FACILITY',
+    item: 'SMAW',
+    brand: 'WEICO',
+    no: '2',
+    name: 'Mesinlas SMAW 400A',
+    type_capacity: '20A/20.8V-400 A/36V',
+    year: '2011',
+    alias: 'WEICO 2',
+    product_identifier: 'WEICO 2 20A/20.8V-400 A/36V',
+    status: 'Available'
+  },
+  {
+    id: '31769070',
+    created_date: '3/8/2025 13:24:09',
+    no_asset: 'CNR 8',
+    category: 'EQUIPMENT',
+    location: 'WAREHOUSE FACILITY',
+    item: 'SMAW',
+    brand: 'WEICO',
+    no: '3',
+    name: 'Mesinlas SMAW 400A',
+    type_capacity: '20A/20.8V-400 A/36V',
+    year: '2011',
+    alias: 'WEICO 3',
+    product_identifier: 'WEICO 3 20A/20.8V-400 A/36V',
+    status: 'Available'
+  },
+  {
+    id: '5270f287',
+    created_date: '3/8/2025 13:24:09',
+    no_asset: 'DAIDEN 1',
+    category: 'EQUIPMENT',
+    location: 'WAREHOUSE FACILITY',
+    item: 'SMAW',
+    brand: 'WEICO',
+    no: '4',
+    name: 'Mesinlas SMAW 400A',
+    type_capacity: '20A/20.8V-400 A/36V',
+    year: '2011',
+    alias: 'WEICO 4',
+    product_identifier: 'WEICO 4 20A/20.8V-400 A/36V',
+    status: 'Available'
+  },
+  {
+    id: '04e7dfc3',
+    created_date: '3/8/2025 13:24:09',
+    no_asset: 'DAIDEN 2',
+    category: 'EQUIPMENT',
+    location: 'WAREHOUSE FACILITY',
+    item: 'SMAW',
+    brand: 'WEICO',
+    no: '5',
+    name: 'Mesinlas SMAW 400A',
+    type_capacity: '20A/20.8V-400 A/36V',
+    year: '2011',
+    alias: 'WEICO 5',
+    product_identifier: 'WEICO 5 20A/20.8V-400 A/36V',
+    status: 'Available'
+  },
+  {
+    id: 'blw-1',
+    created_date: '3/8/2025 13:24:09',
+    no_asset: 'BLW 01',
+    category: 'EQUIPMENT',
+    location: 'WAREHOUSE FACILITY',
+    item: 'Blower',
+    brand: 'Industrial',
+    no: '6',
+    name: 'Industrial Blower 1',
+    type_capacity: 'High Power',
+    year: '2022',
+    alias: 'BLW 1',
+    product_identifier: 'BLW 1 High Power',
+    status: 'Available'
+  },
+  {
+    id: 'blw-2',
+    created_date: '3/8/2025 13:24:09',
+    no_asset: 'BLW 02',
+    category: 'EQUIPMENT',
+    location: 'WAREHOUSE FACILITY',
+    item: 'Blower',
+    brand: 'Industrial',
+    no: '7',
+    name: 'Industrial Blower 2',
+    type_capacity: 'High Power',
+    year: '2022',
+    alias: 'BLW 2',
+    product_identifier: 'BLW 2 High Power',
+    status: 'Available'
+  }
+];
+
+const initialLoans: LoanRequest[] = [
+  {
+    id: '3bcd0f4b',
+    date_created: '9/4/2019 0:00:00',
+    request_id: 'ERQ/2019/09/002/YWTS',
+    project_id: 'DRP19BBBG005/YWTS',
+    shipname: 'SALIKI LIMA',
+    vendor: '',
+    work_order: 'WO1909014/YWTS',
+    date_start: '2019-09-04',
+    date_finish: '2019-09-05',
+    duration: 1,
+    lampiran: '',
+    change: '',
+    status: 'Approved',
+    items: [{ type: 'SMAW', quantity: 2, deployedQuantity: 0 }, { type: 'Blower', quantity: 1, deployedQuantity: 0 }],
+    approval_steps: [
+      { status: 'Draft', label: 'Request Created', date: '9/4/2019 08:00', user: 'Admin', isCompleted: true, isCurrent: false },
+      { status: 'Pending', label: 'Department Approval', date: '9/4/2019 10:30', user: 'HOD Maintenance', comment: 'Verified requirements', isCompleted: true, isCurrent: false },
+      { status: 'Approved', label: 'Final Approval', date: '9/4/2019 14:20', user: 'General Manager', comment: 'Approved for project', isCompleted: true, isCurrent: true }
+    ]
+  }
+];
+
+const initialUsers: User[] = [
+  { id: '1', name: 'Adam Maulana', email: 'maulana.adam1@gmail.com', role: 'Admin' },
+  { id: '2', name: 'John Manager', email: 'manager@shipyard.com', role: 'Manager' },
+  { id: '3', name: 'Staff User', email: 'staff@shipyard.com', role: 'Staff' },
+];
 
 // --- Provider ---
 
@@ -212,7 +358,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
   const [ships, setShips] = useState<Ship[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [hasInitialLoaded, setHasInitialLoaded] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -231,14 +376,14 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
     try {
       const results = await Promise.allSettled([
-        supabase.from('equipment').select('*').order('created_at', { ascending: false }),
+        supabase.from('equipment').select('*').order('created_date', { ascending: false }),
         supabase.from('loan_requests').select('*').order('date_created', { ascending: false }),
         supabase.from('deployment_records').select('*').order('create_date', { ascending: false }),
         supabase.from('profiles').select('*'),
         supabase.from('vendors').select('*').order('vendor', { ascending: true }),
         supabase.from('companies').select('*').order('company_name', { ascending: true }),
         supabase.from('ships').select('*').order('shipname', { ascending: true }),
-        supabase.from('projects').select('*').order('create_date', { ascending: false })
+        supabase.from('projects').select('*').order('id_siaga', { ascending: false })
       ]);
 
       results.forEach((result, index) => {
@@ -276,27 +421,6 @@ export function DataProvider({ children }: { children: ReactNode }) {
     setMounted(true);
     fetchData(true);
 
-    const updateActivity = () => {
-      localStorage.setItem('lastActivity', Date.now().toString());
-    };
-
-    // Throttle the activity update to avoid excessive writes
-    let timeoutId: NodeJS.Timeout;
-    const throttledUpdateActivity = () => {
-      if (timeoutId) return;
-      timeoutId = setTimeout(() => {
-        updateActivity();
-        timeoutId = undefined as any;
-      }, 60000); // Only update once per minute max
-    };
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('mousemove', throttledUpdateActivity);
-      window.addEventListener('keydown', throttledUpdateActivity);
-      window.addEventListener('click', throttledUpdateActivity);
-      window.addEventListener('scroll', throttledUpdateActivity);
-    }
-
     // --- Realtime Subscriptions ---
     const fleetSubscription = supabase
       .channel('fleet_changes')
@@ -315,22 +439,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
     const profilesSubscription = supabase
       .channel('profiles_changes')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, (payload) => {
-        fetchData();
-        if (payload.new && (payload.new as any).id) {
-          setCurrentUser(prev => {
-            if (prev && prev.id === (payload.new as any).id) {
-              return {
-                ...prev,
-                name: (payload.new as any).name || prev.name,
-                role: (payload.new as any).role || prev.role,
-                avatar: (payload.new as any).avatar_url || prev.avatar
-              };
-            }
-            return prev;
-          });
-        }
-      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, () => fetchData())
       .subscribe();
 
     const vendorsSubscription = supabase
@@ -353,225 +462,30 @@ export function DataProvider({ children }: { children: ReactNode }) {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'projects' }, () => fetchData())
       .subscribe();
 
-    // Safety timeout for auth loading
-    const authTimeout = setTimeout(() => {
-      setIsAuthLoading(false);
-      console.warn('Auth check timed out. Continuing...');
-    }, 5000);
-
-    // Check initial session
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      console.log('getSession Result:', { hasSession: !!session, error });
-      if (!session || error) {
-        clearTimeout(authTimeout);
-        setIsAuthLoading(false);
-      }
-    }).catch((e) => {
-      console.error('getSession Error:', e);
-      clearTimeout(authTimeout);
-      setIsAuthLoading(false);
-    });
-
     // Listen for auth changes
     const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('onAuthStateChange Triggered:', event, { hasSession: !!session, hasUser: !!session?.user });
-      clearTimeout(authTimeout);
-      
-      // Idle Session Expiration Check
-      if (session?.user && typeof window !== 'undefined') {
-        const lastActivity = localStorage.getItem('lastActivity');
-        const now = Date.now();
-        const TWELVE_HOURS = 12 * 60 * 60 * 1000;
-        
-        if (lastActivity && ((now - parseInt(lastActivity)) > TWELVE_HOURS)) {
-          // Session expired due to idle
-          localStorage.removeItem('lastActivity');
-          await supabase.auth.signOut();
-          setCurrentUser(null);
-          setIsAuthLoading(false);
-          return;
-        }
-        // Update activity because log in/restore means user is active
-        localStorage.setItem('lastActivity', now.toString());
-      }
-
       if (session?.user) {
-        // Wait on initial load for Supabase auth headers to properly bind to DB client
-        // This solves the known Supabase JS race-condition where `INITIAL_SESSION` queries
-        // can inexplicably return 0 rows because the auth bearer isn't attached to fetch yet.
-        if (event === 'INITIAL_SESSION') {
-          await new Promise(r => setTimeout(r, 600));
-        }
+        // Fetch profile to get role
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single();
 
-        // Fallback user function
-        const setFallbackUser = () => {
-          const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
-          const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || session.user.email === `${defaultAdminUsername}@shipyard.local`;
-          
-          let fallbackRole = 'Staff';
-          if (isDefaultAdmin) fallbackRole = 'Admin';
-          else if (session.user.user_metadata?.role) {
-             let metaRole = session.user.user_metadata.role.toString().trim();
-             metaRole = metaRole.charAt(0).toUpperCase() + metaRole.slice(1).toLowerCase();
-             if (['Admin','Manager','Staff'].includes(metaRole)) fallbackRole = metaRole;
-          }
-
-          setCurrentUser({
-            id: session.user.id,
-            name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown',
-            email: session.user.email || '',
-            role: fallbackRole as 'Admin' | 'Manager' | 'Staff',
-            avatar: session.user.user_metadata?.avatar_url
-          });
-          setIsAuthLoading(false);
+        const user: User = {
+          id: session.user.id,
+          name: profile?.name || session.user.user_metadata.full_name || session.user.email?.split('@')[0] || 'Unknown',
+          email: session.user.email || '',
+          role: profile?.role || (session.user.user_metadata.role as any) || 'Staff',
+          avatar: profile?.avatar_url || session.user.user_metadata.avatar_url
         };
-
-        // Set a local timeout for this specific auth state change to prevent hanging
-        const localAuthTimeout = setTimeout(() => {
-          console.warn('Profile fetch in auth state change timed out.');
-          setFallbackUser();
-        }, 8000);
-
-        const defaultAdminUsername = process.env.NEXT_PUBLIC_DEFAULT_ADMIN_USERNAME || 'superadmin';
-        const isDefaultAdmin = session.user.email === process.env.NEXT_PUBLIC_DEFAULT_ADMIN_EMAIL || session.user.email === `${defaultAdminUsername}@shipyard.local`;
-        const isSuperAdmin = session.user.email === `${defaultAdminUsername}@shipyard.local`;
-        
-        try {
-          // Fetch profile first to get accurate role and data
-          let profile = null;
-          let fetchError = null;
-
-          // 1. Try direct fetch
-          const { data: directProfile, error: directError } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .maybeSingle();
-
-          if (directProfile) {
-            profile = directProfile;
-          } else {
-            // 2. Fallback to API route (bypasses RLS)
-            try {
-              const controller = new AbortController();
-              const fetchTimeoutId = setTimeout(() => controller.abort(), 3000); // 3 second timeout for fallback
-              
-              const res = await fetch('/api/auth/get-profile', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: session.user.id }),
-                signal: controller.signal
-              });
-              
-              clearTimeout(fetchTimeoutId);
-              
-              if (res.ok) {
-                const data = await res.json();
-                profile = data.profile;
-              } else {
-                fetchError = await res.text();
-              }
-            } catch (e) {
-              console.error('API fallback failed or timed out:', e);
-              fetchError = e;
-            }
-          }
-
-          if (!profile && directError) {
-            console.error('Error fetching profile directly:', directError.message);
-          }
-
-          // Initial robust fallback
-          let fallbackRole = 'Staff';
-          if (isDefaultAdmin) fallbackRole = 'Admin';
-          else if (session.user.user_metadata?.role) {
-             let metaRole = session.user.user_metadata.role.toString().trim();
-             metaRole = metaRole.charAt(0).toUpperCase() + metaRole.slice(1).toLowerCase();
-             if (['Admin','Manager','Staff'].includes(metaRole)) fallbackRole = metaRole;
-          }
-
-          let finalRole: 'Admin' | 'Manager' | 'Staff' = fallbackRole as 'Admin' | 'Manager' | 'Staff';
-          let finalName = isSuperAdmin ? 'Super Admin' : (session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown');
-          let finalAvatar = session.user.user_metadata?.avatar_url || '';
-
-          if (profile) {
-            // Enforce default admin role if it was changed somehow
-            let dbRole = (profile.role || 'Staff').toString().trim();
-            dbRole = dbRole.charAt(0).toUpperCase() + dbRole.slice(1).toLowerCase();
-            
-            if (isDefaultAdmin && dbRole !== 'Admin') {
-              // Don't await this update to avoid blocking the UI
-              supabase.from('profiles').update({ role: 'Admin' }).eq('id', session.user.id).then();
-              finalRole = 'Admin';
-            } else {
-              finalRole = ['Admin', 'Manager', 'Staff'].includes(dbRole) ? (dbRole as 'Admin' | 'Manager' | 'Staff') : 'Staff';
-            }
-            finalName = profile.name || finalName;
-            finalAvatar = profile.avatar_url || finalAvatar;
-            
-            // Sync database role to JWT user_metadata so hard refreshes have immediate access
-            if (session.user.user_metadata?.role !== finalRole) {
-              supabase.auth.updateUser({ data: { role: finalRole } }).then();
-            }
-          } else if (!profile) {
-            // Profile couldn't be loaded (e.g. first time Google Login or API fallback 404). 
-            // Create/Upsert it gracefully.
-            const newProfile = {
-              id: session.user.id,
-              name: finalName,
-              email: isSuperAdmin ? '' : (session.user.email || ''),
-              role: finalRole,
-              avatar_url: finalAvatar
-            };
-            
-            // Don't await this upsert to avoid blocking the UI
-            supabase.from('profiles').upsert(newProfile, { onConflict: 'id' }).then(({error: upsertError}) => {
-              if (upsertError) console.error('Error creating new profile:', upsertError.message);
-            });
-          }
-
-          setCurrentUser({
-            id: session.user.id,
-            name: finalName,
-            email: isSuperAdmin ? '' : (session.user.email || ''),
-            role: finalRole,
-            avatar: finalAvatar
-          });
-        } catch (err) {
-          console.error('Unexpected error fetching profile:', err);
-          // Fallback if fetch fails completely
-          let fallbackRole2 = 'Staff';
-          if (isDefaultAdmin) fallbackRole2 = 'Admin';
-          else if (session.user.user_metadata?.role) {
-             let metaRole = session.user.user_metadata.role.toString().trim();
-             metaRole = metaRole.charAt(0).toUpperCase() + metaRole.slice(1).toLowerCase();
-             if (['Admin','Manager','Staff'].includes(metaRole)) fallbackRole2 = metaRole;
-          }
-
-          setCurrentUser({
-            id: session.user.id,
-            name: isSuperAdmin ? 'Super Admin' : (session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Unknown'),
-            email: isSuperAdmin ? '' : (session.user.email || ''),
-            role: fallbackRole2 as 'Admin' | 'Manager' | 'Staff',
-            avatar: session.user.user_metadata?.avatar_url
-          });
-        } finally {
-          clearTimeout(localAuthTimeout);
-          setIsAuthLoading(false);
-        }
+        setCurrentUser(user);
       } else {
         setCurrentUser(null);
-        setIsAuthLoading(false);
       }
     });
 
     return () => {
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('mousemove', throttledUpdateActivity);
-        window.removeEventListener('keydown', throttledUpdateActivity);
-        window.removeEventListener('click', throttledUpdateActivity);
-        window.removeEventListener('scroll', throttledUpdateActivity);
-      }
       fleetSubscription.unsubscribe();
       loansSubscription.unsubscribe();
       deploymentsSubscription.unsubscribe();
@@ -598,11 +512,16 @@ export function DataProvider({ children }: { children: ReactNode }) {
       companies, setCompanies,
       ships, setShips,
       projects, setProjects,
-      currentUser, setCurrentUser,
-      isAuthLoading,
-      fetchData
+      currentUser, setCurrentUser
     }}>
-      {children}
+      {!hasInitialLoaded ? (
+        <div suppressHydrationWarning className="h-screen w-screen flex items-center justify-center bg-slate-50">
+          <div suppressHydrationWarning className="flex flex-col items-center gap-4">
+            <div suppressHydrationWarning className="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-sm font-bold text-slate-500">Syncing with Supabase...</p>
+          </div>
+        </div>
+      ) : children}
     </DataContext.Provider>
   );
 }

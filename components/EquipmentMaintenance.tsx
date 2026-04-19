@@ -31,13 +31,13 @@ export default function EquipmentMaintenance() {
 
   // Filter assets that are Damaged or in Maintenance
   const maintenanceAssets = assets.filter(asset => {
-    const isMaintenance = asset.available === 'Damaged' || asset.available === 'Maintenance';
+    const isMaintenance = asset.status === 'Damaged' || asset.status === 'Maintenance';
     const searchLower = searchTerm.toLowerCase();
     const matchesSearch = 
       asset.no_asset.toLowerCase().includes(searchLower) ||
       asset.name.toLowerCase().includes(searchLower) ||
-      asset.type.toLowerCase().includes(searchLower) ||
-      asset.brand.toLowerCase().includes(searchLower);
+      asset.category.toLowerCase().includes(searchLower) ||
+      asset.item.toLowerCase().includes(searchLower);
     
     return isMaintenance && matchesSearch;
   });
@@ -63,7 +63,7 @@ export default function EquipmentMaintenance() {
 
     const { error } = await supabase
       .from('equipment')
-      .update({ available: 'Available' })
+      .update({ status: 'Available' })
       .eq('id', selectedAsset.id);
 
     if (error) {
@@ -78,7 +78,7 @@ export default function EquipmentMaintenance() {
   const handleStartMaintenance = async (asset: Equipment) => {
     const { error } = await supabase
       .from('equipment')
-      .update({ available: 'Maintenance' })
+      .update({ status: 'Maintenance' })
       .eq('id', asset.id);
 
     if (error) {
@@ -122,7 +122,7 @@ export default function EquipmentMaintenance() {
                 <tr className="bg-slate-50 text-slate-500 uppercase text-[10px] font-bold tracking-wider">
                   <th className="px-6 py-4 border-b border-slate-100">Asset ID</th>
                   <th className="px-6 py-4 border-b border-slate-100">Equipment Name</th>
-                  <th className="px-6 py-4 border-b border-slate-100">Type</th>
+                  <th className="px-6 py-4 border-b border-slate-100">Category</th>
                   <th className="px-6 py-4 border-b border-slate-100">Current Status</th>
                   <th className="px-6 py-4 border-b border-slate-100 text-right">Actions</th>
                 </tr>
@@ -138,24 +138,24 @@ export default function EquipmentMaintenance() {
                     <td className="px-6 py-4">
                       <div>
                         <p className="text-sm font-bold text-slate-800">{asset.name}</p>
-                        <p className="text-[10px] text-slate-500">{asset.brand} - {asset.capacity}</p>
+                        <p className="text-[10px] text-slate-500">{asset.brand} - {asset.type_capacity}</p>
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-xs text-slate-600">{asset.type}</span>
+                      <span className="text-xs text-slate-600">{asset.category}</span>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border ${
-                        asset.available === 'Damaged' 
+                        asset.status === 'Damaged' 
                           ? 'bg-red-100 text-red-700 border-red-200' 
                           : 'bg-amber-100 text-amber-700 border-amber-200'
                       }`}>
-                        {asset.available}
+                        {asset.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        {asset.available === 'Damaged' ? (
+                        {asset.status === 'Damaged' ? (
                           <button 
                             onClick={() => handleStartMaintenance(asset)}
                             className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-700 rounded-lg text-[10px] font-bold hover:bg-amber-100 transition-colors border border-amber-200"
@@ -274,7 +274,7 @@ export default function EquipmentMaintenance() {
                     </div>
                     <div>
                       <p className="text-sm font-bold text-slate-800">{selectedAsset.name}</p>
-                      <p className="text-xs text-slate-500">{selectedAsset.brand} - {selectedAsset.capacity}</p>
+                      <p className="text-xs text-slate-500">{selectedAsset.brand} - {selectedAsset.type_capacity}</p>
                     </div>
                   </div>
                 </div>

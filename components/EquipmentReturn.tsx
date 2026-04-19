@@ -95,7 +95,7 @@ export default function EquipmentReturn() {
       // 2. Update asset status
       const { error: assetError } = await supabase
         .from('equipment')
-        .update({ available: updatedAssetStatus })
+        .update({ status: updatedAssetStatus })
         .eq('no_asset', selectedRecord.product_id);
       if (assetError) throw assetError;
 
