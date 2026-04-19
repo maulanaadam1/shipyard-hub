@@ -240,28 +240,41 @@ export default function EquipmentFleet() {
 
     try {
       let error;
+      let insertedOrUpdatedData;
+
       if (selectedItem) {
-        const { error: updateError } = await supabase
+        const { error: updateError, data: updateData } = await supabase
           .from('equipment')
           .update(equipmentData)
-          .eq('id', selectedItem.id);
+          .eq('id', selectedItem.id)
+          .select();
         error = updateError;
+        insertedOrUpdatedData = updateData;
       } else {
-        const { error: insertError } = await supabase
+        const { error: insertError, data: insertData } = await supabase
           .from('equipment')
-          .insert([equipmentData]);
+          .insert([equipmentData])
+          .select();
         error = insertError;
+        insertedOrUpdatedData = insertData;
       }
+
+      console.log("[Supabase Auth] Current User ID:", (await supabase.auth.getSession()).data.session?.user?.id);
+      console.log("[Supabase Write Result] Error:", error, "Data:", insertedOrUpdatedData);
 
       if (error) {
         throw error;
-      } else {
-        setIsModalOpen(false);
-        setSelectedItem(null);
-        // Force an immediate refetch manually so the UI updates regardless of websocket health/RLS replication settings
-        if (typeof fetchData === 'function') {
-           fetchData();
-        }
+      } else if (!insertedOrUpdatedData || insertedOrUpdatedData.length === 0) {
+        console.warn("Write succeeded but returned 0 rows! This strongly indicates an RLS policy is STILL silently blocking the SELECT return of your own insert, or the row was rejected.");
+        alert("Warning: Data saved to server, but the server refused to return it to your screen. Are you sure you are querying the correct Supabase Project URL, and RLS is truly disabled?");
+      }
+      
+      setIsModalOpen(false);
+      setSelectedItem(null);
+      
+      // Force an immediate refetch manually so the UI updates
+      if (typeof fetchData === 'function') {
+         fetchData();
       }
     } catch (err: any) {
       console.error('Error saving to Supabase:', err.message);
@@ -344,18 +357,33 @@ export default function EquipmentFleet() {
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="p-4 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-slate-50/50">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 flex-1">
-            <div className="relative flex-1 max-w-md w-full">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input 
-                type="text" 
-                placeholder="Search across all columns..." 
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
+            <div className="relative flex-1 max-w-md w-full flex items-center gap-2">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input 
+                  type="text" 
+                  placeholder="Search across all columns..." 
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
+                  className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
+                />
+              </div>
+              <button 
+                onClick={async () => {
+                  try {
+                    const { data, error } = await supabase.from('equipment').select('*');
+                    console.log("Direct db diagnostic:", data, error);
+                    alert(`Database Sync Diagnostic:\nData Found: ${data?.length} rows\nError Status: ${error?.message || 'None'}`);
+                  } catch(e: any) { alert(e.message) }
                 }}
-                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-[#FDB913]/30 focus:border-[#FDB913] transition-all"
-              />
+                className="hidden md:flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 border border-blue-200 rounded-xl text-xs font-medium text-blue-600 hover:bg-blue-100 transition-colors"
+                title="Run Database Health Check"
+              >
+                Diagnostic
+              </button>
             </div>
             
             {selectedIds.size > 0 && (
