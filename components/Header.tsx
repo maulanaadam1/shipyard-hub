@@ -113,14 +113,22 @@ export default function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   };
 
   const handleSupabaseLogout = async () => {
+    // Force instant UI clearance so the user feels the logout immediately
+    localStorage.clear();
+    setCurrentUser(null);
+    setIsUserSwitcherOpen(false);
+
     try {
-      await supabase.auth.signOut();
+      // Race supabase signout against a 1.5-second timeout to prevent deadlocks
+      // if internet connection is lagging or the websocket is unresponsive.
+      await Promise.race([
+        supabase.auth.signOut(),
+        new Promise(resolve => setTimeout(resolve, 1500))
+      ]);
     } catch (error) {
       console.error('Error during sign out:', error);
     } finally {
-      localStorage.clear(); // Ensure absolute clearance of any cached keys even if network fails
-      setCurrentUser(null);
-      setIsUserSwitcherOpen(false);
+      // Always redirect back to root to clean any leftover state.
       window.location.replace('/');
     }
   };
