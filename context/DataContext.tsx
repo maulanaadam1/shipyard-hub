@@ -512,8 +512,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
             if (session.user.user_metadata?.role !== finalRole) {
               supabase.auth.updateUser({ data: { role: finalRole } }).then();
             }
-          } else if (!directError && !fetchError) {
-            // Profile truly doesn't exist (e.g., first time Google Login). Create it.
+          } else if (!profile) {
+            // Profile couldn't be loaded (e.g. first time Google Login or API fallback 404). 
+            // Create/Upsert it gracefully.
             const newProfile = {
               id: session.user.id,
               name: finalName,
@@ -522,9 +523,9 @@ export function DataProvider({ children }: { children: ReactNode }) {
               avatar_url: finalAvatar
             };
             
-            // Don't await this insert to avoid blocking the UI
-            supabase.from('profiles').insert(newProfile).then(({error: insertError}) => {
-              if (insertError) console.error('Error creating new profile:', insertError.message);
+            // Don't await this upsert to avoid blocking the UI
+            supabase.from('profiles').upsert(newProfile, { onConflict: 'id' }).then(({error: upsertError}) => {
+              if (upsertError) console.error('Error creating new profile:', upsertError.message);
             });
           }
 
